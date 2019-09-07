@@ -12,14 +12,11 @@ Plug 'othree/yajs.vim'
 Plug 'mxw/vim-jsx'
 Plug 'mhartington/oceanic-next'
 Plug 'dense-analysis/ale'
-" if has('nvim')
-"   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-" else
-"   Plug 'Shougo/deoplete.nvim'
-"   Plug 'roxma/nvim-yarp'
-"   Plug 'roxma/vim-hug-neovim-rpc'
-" endif
-" let g:deoplete#enable_at_startup = 1
+Plug 'arthurxavierx/vim-caser'
+Plug 'freitass/todo.txt-vim'
+Plug 'epilande/vim-es2015-snippets'
+Plug 'epilande/vim-react-snippets'
+Plug 'SirVer/ultisnips'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
@@ -33,6 +30,7 @@ Plug 'tomtom/tcomment_vim'
 Plug 'othree/es.next.syntax.vim'
 Plug 'tpope/vim-surround'
 Plug 'valloric/youcompleteme', { 'do': './install.py --ts-completer'}
+Plug 'wakatime/vim-wakatime'
 Plug 'luochen1990/rainbow'
 " Plug 'ryanoasis/vim-devicons'
 " Shorthand notation; fetches https://github.com/jungunn/vim-easy-align
@@ -97,7 +95,7 @@ set showcmd
 " Fugitive (Diff for resolve conflicts) ---------------------------------------
 set diffopt+=vertical
 
-set guifont=Droid\ Sans\ Mono\ for\ Powerline:h11
+set guifont=Droid\ Sans\ Mono\ for\ Powerline:h13
 set linespace=5
 set encoding=UTF-8
 " set fileencoding=utf-8
@@ -228,6 +226,9 @@ if (has("termguicolors"))
   set termguicolors
  endif
 
+
+let g:UltiSnipsExpandTrigger="<C-l>"
+
 colorscheme OceanicNext
 
 " mappings
@@ -244,12 +245,15 @@ vnoremap <leader>f :m '>+1<CR>gv=gv
 inoremap <leader>F <Esc>:m .-2<CR>==gi
 vnoremap <leader>F :m '<-2<CR>gv=gv
 
+" todo
+map <leader>todo :vsplit ~/todo.txt<cr>
 " windows
 nnoremap <Right> <C-w>l
 nnoremap <Left> <C-w>h
 nnoremap <Up> <C-w>k
 nnoremap <Down> <C-w>j
-
+nnoremap <silent> <leader><Up> :vertical resize +20<cr>
+nnoremap <silent> <leader><Down> :vertical resize -20<cr>
 " code
 " log expression under cursor
 nmap <Leader>cl yiwoconsole.log('<c-r>":', <c-r>");<Esc>^
