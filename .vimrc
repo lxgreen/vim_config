@@ -32,6 +32,8 @@ Plug 'tpope/vim-surround'
 Plug 'valloric/youcompleteme', { 'do': './install.py --ts-completer'}
 Plug 'wakatime/vim-wakatime'
 Plug 'luochen1990/rainbow'
+Plug 'skwp/greplace.vim'
+Plug 'mattn/emmet-vim'
 " Plug 'ryanoasis/vim-devicons'
 " Shorthand notation; fetches https://github.com/jungunn/vim-easy-align
 " Plug 'junegunn/vim-easy-align'
@@ -91,7 +93,10 @@ set ttyfast
 set autoindent
 set smartindent
 set showcmd
-
+set backupdir=./.backup
+set directory=.,./.swap//
+set nobackup
+set nowritebackup
 " Fugitive (Diff for resolve conflicts) ---------------------------------------
 set diffopt+=vertical
 
@@ -128,6 +133,14 @@ let g:ale_fixers = {
 \}
 let g:ale_fix_on_save = 1
 let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
+
+" emmet
+" =======
+let g:user_emmet_settings = {
+\  'javascript' : {
+\      'extends' : 'jsx',
+\  },
+\}
 
 " airline
 set laststatus=2
@@ -208,6 +221,8 @@ if executable('ag')
   nnoremap <leader>ag :Ag
 endif
 
+set grepprg=ag
+let g:grep_cmd_opts = '--line-numbers --noheading'
 " TagBar Configuration
 " --------------------------------------------------------
 
@@ -257,3 +272,7 @@ nnoremap <silent> <leader><Down> :vertical resize -20<cr>
 " code
 " log expression under cursor
 nmap <Leader>cl yiwoconsole.log('<c-r>":', <c-r>");<Esc>^
+
+" C-x C-f from current dir
+:autocmd InsertEnter * let save_cwd = getcwd() | set autochdir
+autocmd InsertLeave * set noautochdir | execute 'cd' fnameescape(save_cwd)
