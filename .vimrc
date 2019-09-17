@@ -34,7 +34,12 @@ Plug 'wakatime/vim-wakatime'
 Plug 'luochen1990/rainbow'
 Plug 'skwp/greplace.vim'
 Plug 'mattn/emmet-vim'
-" Plug 'ryanoasis/vim-devicons'
+Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
+Plug 'xolox/vim-session'
+Plug 'xolox/vim-misc'
+Plug 'heavenshell/vim-syntax-flowtype'
+Plug 'mhinz/vim-startify'
+
 " Shorthand notation; fetches https://github.com/jungunn/vim-easy-align
 " Plug 'junegunn/vim-easy-align'
 
@@ -64,7 +69,7 @@ Plug 'mattn/emmet-vim'
 call plug#end()
 
 " General configuration -------------------------------------------------------
-set number
+set nu rnu
 set ruler
 
 filetype plugin indent on
@@ -100,7 +105,7 @@ set nowritebackup
 " Fugitive (Diff for resolve conflicts) ---------------------------------------
 set diffopt+=vertical
 
-set guifont=Droid\ Sans\ Mono\ for\ Powerline:h13
+set guifont=Fira\ Code:h13
 set linespace=5
 set encoding=UTF-8
 " set fileencoding=utf-8
@@ -128,7 +133,7 @@ let g:ale_linters = {
 \}
 
 let g:ale_fixers = {
-\    'javascript': ['prettier', 'eslint'],
+\    'javascript': ['eslint'],
 \    'scss': ['prettier']
 \}
 let g:ale_fix_on_save = 1
@@ -246,9 +251,15 @@ let g:UltiSnipsExpandTrigger="<C-l>"
 
 colorscheme OceanicNext
 
+" sessions
+let g:session_autosave='yes'
+let g:session_autosave_periodic=3
+let g:session_autosave_silent=1
+let g:session_autoload='yes'
+
 " mappings
-map <F3> :NERDTreeToggle<CR>
-nmap <silent> <leader>cp :PlugStatus<cr>
+map <F3> :NERDTreeFind %<CR>
+nmap <silent> <leader>cp :PlugInstall<cr>
 nnoremap <silent> <leader>cv :vsplit ~/.vimrc<cr>
 " Source my .vimrc file (This reloads the configuration)
 nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
@@ -267,12 +278,21 @@ nnoremap <Right> <C-w>l
 nnoremap <Left> <C-w>h
 nnoremap <Up> <C-w>k
 nnoremap <Down> <C-w>j
-nnoremap <silent> <leader><Up> :vertical resize +20<cr>
-nnoremap <silent> <leader><Down> :vertical resize -20<cr>
+nnoremap <silent><C-Up> :vertical resize +20<cr>
+nnoremap <silent> <C-Down> :vertical resize -20<cr>
 " code
 " log expression under cursor
 nmap <Leader>cl yiwoconsole.log('<c-r>":', <c-r>");<Esc>^
 
+set autochdir
 " C-x C-f from current dir
-:autocmd InsertEnter * let save_cwd = getcwd() | set autochdir
-autocmd InsertLeave * set noautochdir | execute 'cd' fnameescape(save_cwd)
+" :autocmd InsertEnter * let save_cwd = getcwd() | set autochdir
+" autocmd InsertLeave * set noautochdir | execute 'cd' fnameescape(save_cwd)
+
+" youcompleteme
+let g:ycm_filetype_blacklist = {}
+
+let g:UltiSnipsSnippetDirectories=["UltiSnips", "snips"]
+let g:UltiSnipsSnippetsDir="~/.vim/snips/"
+let g:UltiSnipsEditSplit = 'vertical'
+
