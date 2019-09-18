@@ -16,7 +16,9 @@ Plug 'arthurxavierx/vim-caser'
 Plug 'freitass/todo.txt-vim'
 Plug 'epilande/vim-es2015-snippets'
 Plug 'epilande/vim-react-snippets'
+Plug 'honza/vim-snippets'
 Plug 'SirVer/ultisnips'
+Plug 'ervandew/supertab'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
@@ -249,6 +251,9 @@ if (has("termguicolors"))
 
 let g:UltiSnipsExpandTrigger="<C-l>"
 
+" colors
+let g:rainbow_active = 1
+
 colorscheme OceanicNext
 
 " sessions
@@ -291,8 +296,19 @@ set autochdir
 
 " youcompleteme
 let g:ycm_filetype_blacklist = {}
-
-let g:UltiSnipsSnippetDirectories=["UltiSnips", "snips"]
 let g:UltiSnipsSnippetsDir="~/.vim/snips/"
-let g:UltiSnipsEditSplit = 'vertical'
+let g:UltiSnipsSnippetDirectories=['UltiSnips', 'snips']
 
+" ultisnips
+let g:UltiSnipsUsePythonVersion = 3
+let g:UltiSnipsEditSplit = 'vertical'
+map <F5> :UltiSnipsEdit<CR>
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
+
+" better key bindings for UltiSnipsExpandTrigger
+let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
