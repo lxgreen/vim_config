@@ -1,11 +1,7 @@
 
-" Specify a directory for plugins
-" - For Neovim: ~/.local/share/nvim/plugged
-" - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('~/.local/share/nvim/plugged')
 
-" Make sure you use single quotes
-
+Plug 'zhaocai/goldenview.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'othree/yajs.vim'
@@ -34,69 +30,42 @@ Plug 'tpope/vim-surround'
 Plug 'valloric/youcompleteme', { 'do': './install.py --ts-completer'}
 Plug 'wakatime/vim-wakatime'
 Plug 'luochen1990/rainbow'
-Plug 'skwp/greplace.vim'
 Plug 'mattn/emmet-vim'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 Plug 'xolox/vim-session'
 Plug 'xolox/vim-misc'
-Plug 'heavenshell/vim-syntax-flowtype'
 Plug 'mhinz/vim-startify'
-
-" Shorthand notation; fetches https://github.com/jungunn/vim-easy-align
-" Plug 'junegunn/vim-easy-align'
-
-" Any valid git URL is allowed
-
-" Multiple Plug commands can be written in a single line using | separators
-" Plug 'SirVer/ultisnips' | Plug 'honza/vim-snippets'
-
-"Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
-
-" Using a non-master branch
-"Plug 'rdnetto/YCM-Generator', { 'branch': 'stable' }
-
-" Using a tagged release; wildcard allowed (requires git 1.9.2 or above)
-"Plug 'fatih/vim-go', { 'tag': '*' }
-
-" Plugin options
-"Plug 'nsf/gocode', { 'tag': 'v.20150303', 'rtp': 'vim' }
-
-" Plugin outside ~/.vim/plugged with post-update hook
-"Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-
-" Unmanaged plugin (manually installed and updated)
-"Plug '~/my-prototype-plugin'
-
-" Initialize plugin system
+Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-repeat'
+Plug 'vim-scripts/grep.vim'
+Plug 'mhinz/vim-grepper'
+Plug 'tomarrell/vim-npr'
+Plug 'chrisbra/unicode.vim'
+Plug 'blueyed/vim-diminactive'
+Plug 'tpope/vim-dispatch'
+Plug 'tpope/vim-projectionist'
+Plug 'radenling/vim-dispatch-neovim'
+Plug 'tpope/vim-unimpaired'
+Plug 'janko/vim-test'
+Plug 'craigdallimore/vim-jest-cli', { 'for': 'javascript' }
 call plug#end()
 
 " General configuration -------------------------------------------------------
+" set shell=zsh\ -i
+set nocompatible
+filetype plugin indent on
 set nu rnu
 set ruler
-
-filetype plugin indent on
-" show existing tab with 2 spaces width
 set tabstop=2
-" when indenting with '>', use 2 spaces width
 set shiftwidth=2
-" Sets the number of columns for a TAB.
 set softtabstop=2
-" On pressing tab, insert 2 spaces
 set expandtab
-
-set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
-
-" Autocompletion
-" set wildmenu
-" set wildmode=list:longest
-
-" Search
+set list
+set listchars=tab:>-,trail:~,extends:>,precedes:<
+" set spell
+" set spelllang=en_us
 set hlsearch
 set incsearch
-
-"set paste
-set ttyfast
-
 set autoindent
 set smartindent
 set showcmd
@@ -104,17 +73,13 @@ set backupdir=./.backup
 set directory=.,./.swap//
 set nobackup
 set nowritebackup
-" Fugitive (Diff for resolve conflicts) ---------------------------------------
-set diffopt+=vertical
-
 set guifont=Fira\ Code:h13
 set linespace=5
 set encoding=UTF-8
-" set fileencoding=utf-8
-" set fileencodings=ucs-bom,utf8,prc
 set ic
-" let g:webdevicons_enable_nerdtree=1
-" let g:webdevicons_conceal_nerdtree_brackets=0
+
+" Fugitive (Diff for resolve conflicts) ---------------------------------------
+set diffopt+=vertical
 
 let NERDTreeShowIgnoredStatus = 1
 let g:NERDTreeIndicatorMapCustom = {
@@ -158,16 +123,8 @@ set t_Co=256
 call airline#parts#define_function('ALE', 'ALEGetStatusLine')
 call airline#parts#define_condition('ALE', 'exists("*ALEGetStatusLine")')
 let g:airline_section_error = airline#section#create_right(['ALE'])
-" let g:airline_theme='durant'
-" let g:airline_theme='powerlineish'
-" let g:airline_theme='simple'
-" let g:airline_theme='term'
 let g:airline_theme='jellybeans'
-" let g:webdevicons_enable_airline_tabline = 1
-" let g:webdevicons_enable_airline_statusline = 1
 let g:airline_powerline_fonts = 1
-
-" powerline symbols
 let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
 let g:airline_right_sep = ''
@@ -217,19 +174,7 @@ let g:ctrlp_custom_ignore = {
 " Update the search once the user ends typing.
 let g:ctrlp_lazy_update = 2
 " The Silver Searcher
-if executable('ag')
-  " Use ag in CtrlP for listing files, lightning fast.
-  let ignores = '--ignore ".git/" --ignore ".hg/" --ignore ".svn/" --ignore "node_modules/" --ignore ".history/"' "  dirs
-  let ignores .= '--ignore "*.pyc" --ignore "*.pyo"' " files
-  let g:ctrlp_user_command = 'ag %s -l --skip-vcs-ignores --nocolor -g "" ' . ignores
 
-  " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching = 0
-  nnoremap <leader>ag :Ag
-endif
-
-set grepprg=ag
-let g:grep_cmd_opts = '--line-numbers --noheading'
 " TagBar Configuration
 " --------------------------------------------------------
 
@@ -253,7 +198,8 @@ let g:UltiSnipsExpandTrigger="<C-l>"
 
 " colors
 let g:rainbow_active = 1
-
+let g:diminactive_use_syntax = 1
+let g:diminactive_use_colorcolumn = 0
 colorscheme OceanicNext
 
 " sessions
@@ -263,18 +209,12 @@ let g:session_autosave_silent=1
 let g:session_autoload='yes'
 
 " mappings
-map <F3> :NERDTreeFind %<CR>
+map <F3> :NERDTreeToggle %<CR>
+map <leader><F3> :NERDTreeFind %<CR>
 nmap <silent> <leader>cp :PlugInstall<cr>
 nnoremap <silent> <leader>cv :vsplit ~/.vimrc<cr>
 " Source my .vimrc file (This reloads the configuration)
 nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
-" Move lines
-nnoremap <leader>f :m .+1<CR>==
-nnoremap <leader>F :m .-2<CR>==
-inoremap <leader>f <Esc>:m .+1<CR>==gi
-vnoremap <leader>f :m '>+1<CR>gv=gv
-inoremap <leader>F <Esc>:m .-2<CR>==gi
-vnoremap <leader>F :m '<-2<CR>gv=gv
 
 " todo
 map <leader>todo :vsplit ~/todo.txt<cr>
@@ -283,26 +223,32 @@ nnoremap <Right> <C-w>l
 nnoremap <Left> <C-w>h
 nnoremap <Up> <C-w>k
 nnoremap <Down> <C-w>j
-nnoremap <silent><C-Up> :vertical resize +20<cr>
-nnoremap <silent> <C-Down> :vertical resize -20<cr>
+nnoremap <silent><C-Up> :resize +5<cr>
+nnoremap <silent> <C-Down> :resize -5<cr>
+nnoremap <silent> <C-Left> :vertical resize -20<cr>
+nnoremap <silent> <C-Right> :vertical resize +20<cr>
 " code
 " log expression under cursor
 nmap <Leader>cl yiwoconsole.log('<c-r>":', <c-r>");<Esc>^
+"
+" grep the word under cursor
+let grepper ={}
+let grepper.tools = ['rg', 'git', 'grep']
+nnoremap <leader>* :Grepper -tool git -open -switch -cword -noprompt<cr>
 
-set autochdir
-" C-x C-f from current dir
-" :autocmd InsertEnter * let save_cwd = getcwd() | set autochdir
-" autocmd InsertLeave * set noautochdir | execute 'cd' fnameescape(save_cwd)
+set grepprg=rg\ -H\ --no-heading\ --vimgrep
+set grepformat=$f:$l:%c:%m
 
 " youcompleteme
 let g:ycm_filetype_blacklist = {}
-let g:UltiSnipsSnippetsDir="~/.vim/snips/"
-let g:UltiSnipsSnippetDirectories=['UltiSnips', 'snips']
 
 " ultisnips
 let g:UltiSnipsUsePythonVersion = 3
+let g:UltiSnipsSnippetsDir="~/.vim/snips/"
+let g:UltiSnipsSnippetDirectories=['UltiSnips', 'snips']
 let g:UltiSnipsEditSplit = 'vertical'
 map <F5> :UltiSnipsEdit<CR>
+
 " make YCM compatible with UltiSnips (using supertab)
 let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
@@ -312,3 +258,40 @@ let g:SuperTabDefaultCompletionType = '<C-n>'
 let g:UltiSnipsExpandTrigger = "<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+function! SetupCommandAlias(input, output)
+  exec 'cabbrev <expr> '.a:input
+        \ .' ((getcmdtype() is# ":" && getcmdline() is# "'.a:input.'")'
+        \ .'? ("'.a:output.'") : ("'.a:input.'"))'
+endfunction
+
+" command abbreviations
+call SetupCommandAlias("grep", "GrepperRg")
+call SetupCommandAlias("G", "Git")
+call SetupCommandAlias("npm", "Dispatch npm run")
+call SetupCommandAlias("yarn", "Dispatch yarn")
+
+command VTerm :silent :vsplit | :terminal
+command STerm :silent :split | :terminal
+command TTerm :silent :tabe | :terminal
+
+call SetupCommandAlias("term", "terminal")
+call SetupCommandAlias("vterm", "VTerm")
+call SetupCommandAlias("tterm", "Tterm")
+call SetupCommandAlias("sterm", "Sterm")
+
+let test#strategy = "dispatch"
+let g:dispatch_compilers = { 'jest': 'jest-cli' }
+
+" terminal
+if has('nvim')
+  tnoremap <Esc> <C-\><C-n>
+  tnoremap <C-v><Esc> <Esc>
+  highlight! link TermCursor Cursor
+  highlight! TermCursorNC guibg=red guifg=white ctermbg=1 ctermfg=15
+  if executable('nvr')
+    let $VISUAL="nvr -cc vsplit --remote-wait + 'set bufhidden=wipe'"
+  endif
+endif
+
+
