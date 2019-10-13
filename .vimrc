@@ -32,10 +32,9 @@ Plug 'wakatime/vim-wakatime'
 Plug 'luochen1990/rainbow'
 Plug 'mattn/emmet-vim'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-Plug 'xolox/vim-session'
-Plug 'xolox/vim-misc'
 Plug 'mhinz/vim-startify'
 Plug 'tpope/vim-abolish'
+Plug 'tpope/vim-obsession'
 Plug 'tpope/vim-repeat'
 Plug 'vim-scripts/grep.vim'
 Plug 'mhinz/vim-grepper'
@@ -48,6 +47,8 @@ Plug 'radenling/vim-dispatch-neovim'
 Plug 'tpope/vim-unimpaired'
 Plug 'janko/vim-test'
 Plug 'craigdallimore/vim-jest-cli', { 'for': 'javascript' }
+Plug 'dhruvasagar/vim-prosession'
+Plug 'chaoren/vim-wordmotion'
 call plug#end()
 
 " General configuration -------------------------------------------------------
@@ -124,6 +125,12 @@ call airline#parts#define_function('ALE', 'ALEGetStatusLine')
 call airline#parts#define_condition('ALE', 'exists("*ALEGetStatusLine")')
 let g:airline_section_error = airline#section#create_right(['ALE'])
 let g:airline_theme='jellybeans'
+
+let g:airline_section_x=''
+let g:airline_section_y=''
+let g:airline_inactive_collapse=1
+let g:airline_skip_empty_sections = 1
+
 let g:airline_powerline_fonts = 1
 let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
@@ -203,10 +210,8 @@ let g:diminactive_use_colorcolumn = 0
 colorscheme OceanicNext
 
 " sessions
-let g:session_autosave='yes'
-let g:session_autosave_periodic=3
-let g:session_autosave_silent=1
-let g:session_autoload='yes'
+let g:prosession_on_startup=1
+let g:prosession_default_session=1
 
 " mappings
 map <F3> :NERDTreeToggle %<CR>
@@ -271,14 +276,16 @@ call SetupCommandAlias("G", "Git")
 call SetupCommandAlias("npm", "Dispatch npm run")
 call SetupCommandAlias("yarn", "Dispatch yarn")
 
-command VTerm :silent :vsplit | :terminal
-command STerm :silent :split | :terminal
-command TTerm :silent :tabe | :terminal
+if !exists(":VTerm")
+  command VTerm :silent :vsplit | :terminal
+  command STerm :silent :split | :terminal
+  command TTerm :silent :tabe | :terminal
 
-call SetupCommandAlias("term", "terminal")
-call SetupCommandAlias("vterm", "VTerm")
-call SetupCommandAlias("tterm", "Tterm")
-call SetupCommandAlias("sterm", "Sterm")
+  call SetupCommandAlias("term", "terminal")
+  call SetupCommandAlias("vterm", "VTerm")
+  call SetupCommandAlias("tterm", "TTerm")
+  call SetupCommandAlias("sterm", "STerm")
+endif
 
 let test#strategy = "dispatch"
 let g:dispatch_compilers = { 'jest': 'jest-cli' }
@@ -287,6 +294,7 @@ let g:dispatch_compilers = { 'jest': 'jest-cli' }
 if has('nvim')
   tnoremap <Esc> <C-\><C-n>
   tnoremap <C-v><Esc> <Esc>
+  tnoremap <C-c> <C-\><C-n>i<C-c>
   highlight! link TermCursor Cursor
   highlight! TermCursorNC guibg=red guifg=white ctermbg=1 ctermfg=15
   if executable('nvr')
@@ -294,4 +302,14 @@ if has('nvim')
   endif
 endif
 
+set undodir=$HOME/.local/share/nvim/undo
+set undofile
 
+augroup vimrc
+  autocmd!
+  autocmd BufWritePre /tmp/* setlocal noundofile
+augroup END
+
+" auto-close preview window
+autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif
