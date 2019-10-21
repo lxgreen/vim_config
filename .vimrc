@@ -49,6 +49,8 @@ Plug 'janko/vim-test'
 Plug 'craigdallimore/vim-jest-cli', { 'for': 'javascript' }
 Plug 'dhruvasagar/vim-prosession'
 Plug 'chaoren/vim-wordmotion'
+Plug 'elentok/plaintasks.vim'
+Plug 'tmux-plugins/vim-tmux'
 call plug#end()
 
 " General configuration -------------------------------------------------------
@@ -275,6 +277,8 @@ call SetupCommandAlias("grep", "GrepperRg")
 call SetupCommandAlias("G", "Git")
 call SetupCommandAlias("npm", "Dispatch npm run")
 call SetupCommandAlias("yarn", "Dispatch yarn")
+call SetupCommandAlias("W", "w")
+call SetupCommandAlias("Q", "q")
 
 if !exists(":VTerm")
   command VTerm :silent :vsplit | :terminal
