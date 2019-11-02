@@ -51,6 +51,10 @@ Plug 'dhruvasagar/vim-prosession'
 Plug 'chaoren/vim-wordmotion'
 Plug 'elentok/plaintasks.vim'
 Plug 'tmux-plugins/vim-tmux'
+Plug 'APZelos/blamer.nvim'
+Plug 'junegunn/vim-emoji'
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
 call plug#end()
 
 " General configuration -------------------------------------------------------
@@ -220,6 +224,7 @@ map <F3> :NERDTreeToggle %<CR>
 map <leader><F3> :NERDTreeFind %<CR>
 nmap <silent> <leader>cp :PlugInstall<cr>
 nnoremap <silent> <leader>cv :vsplit ~/.vimrc<cr>
+nnoremap <silent> <leader>zz :tabe ~/.zshrc <bar> :lcd ~/.zsh<cr>
 " Source my .vimrc file (This reloads the configuration)
 nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
 
@@ -243,7 +248,7 @@ let grepper ={}
 let grepper.tools = ['rg', 'git', 'grep']
 nnoremap <leader>* :Grepper -tool git -open -switch -cword -noprompt<cr>
 
-set grepprg=rg\ -H\ --no-heading\ --vimgrep
+set grepprg=rg\ -H\ --case-insensitive\ --no-heading\ --vimgrep
 set grepformat=$f:$l:%c:%m
 
 " youcompleteme
@@ -279,7 +284,8 @@ call SetupCommandAlias("npm", "Dispatch npm run")
 call SetupCommandAlias("yarn", "Dispatch yarn")
 call SetupCommandAlias("W", "w")
 call SetupCommandAlias("Q", "q")
-
+call SetupCommandAlias("blame", "BlamerToggle")
+call SetupCommandAlias("revert", "Git checkout %")
 if !exists(":VTerm")
   command VTerm :silent :vsplit | :terminal
   command STerm :silent :split | :terminal
@@ -317,3 +323,20 @@ augroup END
 " auto-close preview window
 autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+
+au! BufRead,BufNewFile *.json set filetype=json
+au! BufRead,BufNewFile *.md set filetype=markdown
+
+" gitgutter + emoji
+let g:gitgutter_sign_added = emoji#for('heavy_plus_sign')
+let g:gitgutter_sign_modified = emoji#for('heavy_division_sign')
+let g:gitgutter_sign_removed_first_line = emoji#for('heavy_minus_sign')
+let g:gitgutter_sign_removed = emoji#for('heavy_minus_sign')
+let g:gitgutter_sign_modified_removed = emoji#for('heavy_dollar_sign')
+
+call SetupCommandAlias("emoji", "%s/:\([^:]\+\):/\=emoji#for(submatch(1), submatch(0))/g")
+
+let g:vim_markdown_folding_disabled = 1
+set conceallevel=2
+let g:vim_markdown_conceal = 0
+
