@@ -27,7 +27,8 @@ Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
 Plug 'tomtom/tcomment_vim'
 Plug 'othree/es.next.syntax.vim'
 Plug 'tpope/vim-surround'
-Plug 'valloric/youcompleteme', { 'do': './install.py --ts-completer'}
+" Plug 'valloric/youcompleteme', { 'do': './install.py --ts-completer'}
+Plug 'zxqfl/tabnine-vim'
 Plug 'wakatime/vim-wakatime'
 Plug 'luochen1990/rainbow'
 Plug 'mattn/emmet-vim'
@@ -112,6 +113,8 @@ let g:ale_fixers = {
 \}
 let g:ale_fix_on_save = 1
 let g:ale_statusline_format = ['⨉ %d', '⚠ %d', '⬥ ok']
+let g:ale_sign_warning = emoji#for('warning')
+let g:ale_sign_error = emoji#for('X')
 
 " emmet
 " =======
@@ -248,7 +251,7 @@ let grepper ={}
 let grepper.tools = ['rg', 'git', 'grep']
 nnoremap <leader>* :Grepper -tool git -open -switch -cword -noprompt<cr>
 
-set grepprg=rg\ -H\ --case-insensitive\ --no-heading\ --vimgrep
+set grepprg=rg\ -i\ -H\ --no-heading\ --vimgrep
 set grepformat=$f:$l:%c:%m
 
 " youcompleteme
@@ -278,7 +281,7 @@ function! SetupCommandAlias(input, output)
 endfunction
 
 " command abbreviations
-call SetupCommandAlias("grep", "GrepperRg")
+call SetupCommandAlias("grep", "GrepperRg -i")
 call SetupCommandAlias("G", "Git")
 call SetupCommandAlias("npm", "Dispatch npm run")
 call SetupCommandAlias("yarn", "Dispatch yarn")
