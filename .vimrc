@@ -51,10 +51,11 @@ Plug 'plasticboy/vim-markdown'
 Plug 'junegunn/limelight.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'tmux-plugins/vim-tmux-focus-events'
-Plug 'kshenoy/vim-signature'
+Plug 'jacquesbh/vim-showmarks'
 Plug 'mox-mox/vim-localsearch'
 Plug 'jrudess/vim-foldtext'
 Plug 'metakirby5/codi.vim'
+Plug 'mcchrish/nnn.vim'
 call plug#end()
 
 " General configuration -------------------------------------------------------
@@ -297,9 +298,6 @@ function! CopyMatches(reg)
   execute 'let @'.reg.' = join(hits, "\n") . "\n"'
 endfunction
 command! -register CopyMatches call CopyMatches(<q-reg>)
-
-" marks
-let g:SignatureMarkTextHLDynamic = 1
 
 " coc.nvim
 let g:coc_global_extensions = ['coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-eslint', 'coc-snippets', 'coc-tslint', 'coc-stylelint', 'coc-cssmodules', 'coc-marketplace']
