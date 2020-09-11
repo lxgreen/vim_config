@@ -1,99 +1,76 @@
 call plug#begin('~/.local/share/nvim/plugged')
-Plug 'zhaocai/goldenview.vim' " autoresize panes
-Plug 'othree/yajs.vim' " js syntax highlight
-Plug 'mxw/vim-jsx' " jsx syntax
-Plug 'mhartington/oceanic-next' "theme
-" Plug 'dense-analysis/ale' "lint engine
-Plug 'arthurxavierx/vim-caser' "switch case (kebab, camel, etc)
-Plug 'epilande/vim-es2015-snippets'
-Plug 'epilande/vim-react-snippets'
-Plug 'honza/vim-snippets'
-Plug 'SirVer/ultisnips'
-" Plug 'ervandew/supertab'
-Plug 'tpope/vim-fugitive'
-Plug 'vim-airline/vim-airline'
+Plug 'zhaocai/goldenview.vim'                                     " autoresize panes
+Plug 'mhartington/oceanic-next'                                   " theme
+Plug 'arthurxavierx/vim-caser'                                    " switch case (kebab, camel, etc)
+Plug 'tpope/vim-fugitive'                                         " git essentials
 Plug 'airblade/vim-gitgutter'
+Plug 'junegunn/vim-emoji'
+Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'ctrlpvim/ctrlp.vim' " TODO: remap and remove
-Plug 'ternjs/tern_for_vim', { 'do': 'npm install' } " code navigation -- map this!
 Plug 'tomtom/tcomment_vim'
-Plug 'othree/es.next.syntax.vim'
-Plug 'tpope/vim-surround'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'sheerun/vim-polyglot'
+Plug 'tpope/vim-surround'                                         " surround with brakets, tags, etc
+Plug 'neoclide/coc.nvim', {'branch': 'release'}                   " dev essentials
 Plug 'wakatime/vim-wakatime'
-Plug 'luochen1990/rainbow'
-" Plug 'mattn/emmet-vim'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-Plug 'mhinz/vim-startify'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-obsession'
-Plug 'svermeulen/vim-easyclip'
-Plug 'tpope/vim-repeat' " HERE
+Plug 'svermeulen/vim-easyclip'                                    " yank to clipboard, 'd' for delete, 'x' for cut
+Plug 'tpope/vim-repeat'                                           " plugins '.' operator
 Plug 'vim-scripts/grep.vim'
 Plug 'mhinz/vim-grepper'
-Plug 'tomarrell/vim-npr'
 Plug 'chrisbra/unicode.vim'
 Plug 'blueyed/vim-diminactive'
-Plug 'tpope/vim-dispatch'
+Plug 'tpope/vim-dispatch'                                         " compiler run
 Plug 'radenling/vim-dispatch-neovim'
-Plug 'tpope/vim-unimpaired'
-Plug 'janko/vim-test'
+Plug 'tpope/vim-unimpaired'                                       " lots of key shortcuts
+Plug 'janko/vim-test'                                             " tests
 Plug 'craigdallimore/vim-jest-cli', { 'for': 'javascript' }
 Plug 'dhruvasagar/vim-prosession'
-Plug 'chaoren/vim-wordmotion'
-Plug 'elentok/plaintasks.vim'
-Plug 'tmux-plugins/vim-tmux'
-Plug 'junegunn/vim-emoji'
+Plug 'chaoren/vim-wordmotion'                                     " navigate inside camelCase, kebab-case, etc
+Plug 'elentok/plaintasks.vim'                                     " todo list: + adds task, = marks it complete
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
-Plug 'junegunn/limelight.vim'
-Plug 'easymotion/vim-easymotion'
-Plug 'tmux-plugins/vim-tmux-focus-events'
-Plug 'jacquesbh/vim-showmarks'
-Plug 'mox-mox/vim-localsearch'
+Plug 'easymotion/vim-easymotion'                                  " 'f' for quick navigation (cross-window)
+Plug 'tmux-plugins/vim-tmux-focus-events'                         " essential for tmux
+Plug 'tmux-plugins/vim-tmux'
+Plug 'jacquesbh/vim-showmarks'                                    " show marks command
+Plug 'mox-mox/vim-localsearch'                                    " search per window mode
 Plug 'jrudess/vim-foldtext'
-Plug 'metakirby5/codi.vim'
-Plug 'mcchrish/nnn.vim'
+Plug 'mcchrish/nnn.vim'                                           " file picker -- replace by fff or lf?
+Plug 'bogado/file-line'                                           " `vim file:line` opens the file with caret on the line
+Plug 'vim-scripts/BufOnly.vim'                                    " kill all buffers except current command
+Plug 'takac/vim-hardtime'                                         " navigation habits
 call plug#end()
 
-" General configuration -------------------------------------------------------
-" set shell=zsh\ -i
-set nocompatible
-filetype plugin indent on
-set nu rnu
-set ruler
+set nocompatible  " don't care about vi
+filetype plugin indent on  " file type detection, plugin for type, indent for type
+set nu rnu  " relative line numbers
+set ruler  " color column
+set colorcolumn=100
 set tabstop=2
 set shiftwidth=2
 set softtabstop=2
-set expandtab
-set list
+set expandtab   " insert space on tab
+set list  " display invisible chars
 set listchars=tab:>-,trail:~,extends:>,precedes:<
-" set spell
-" set spelllang=en_us
 set hlsearch
 set incsearch
 set autoindent
 set smartindent
-set showcmd
+set showcmd " command line visible
 set backupdir=$TEMP//
 set directory=$TEMP//
 set nobackup
 set nowritebackup
 set guifont=Fira\ Code:h13
-" set macligatures
 set linespace=5
 set encoding=UTF-8
 set ic
-
-" Fugitive (Diff for resolve conflicts) ---------------------------------------
-set diffopt+=vertical
-
-" airline
+set diffopt+=vertical  " diff open vertically
 set laststatus=2
-
-" Use 256 colors
 set t_Co=256
 
 let g:airline#extensions#tabline#enabled=1
@@ -115,56 +92,15 @@ let g:airline_right_alt_sep = 'î‚³'
 nnoremap <F2> :FZF<CR>
 nnoremap ,e :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
 
-" CtrlP Configuration
-" ---------------------------------------------------------
-"
-" to search in the current open buffers
-nnoremap ,b :CtrlPBuffer<CR>
-" to search listing all tags
-nnoremap ,t :CtrlPBufTag<CR>
-" to search through the current file's lines
-nnoremap ,l :CtrlPLine<CR>
-" to search listing all Most-Recently-Used file.
-nnoremap ,r :CtrlPMRUFiles<CR>
-
-" to be able to call CtrlP with default search text
-function! CtrlPWithSearchText(search_text, ctrlp_command_end)
-    execute ':CtrlP' . a:ctrlp_command_end
-    call feedkeys(a:search_text)
-endfunction
-
-" CtrlP with default text
-nnoremap ,wg :call CtrlPWithSearchText(expand('<cword>'),'BufTag')<CR>
-nnoremap ,wf :call CtrlPWithSearchText(expand('<cword>'),'Line')<CR>
-nnoremap ,d ,wg
-nnoremap ,we :call CtrlPWithSearchText(expand('<cword>'), '')<CR>
-nnoremap ,pe :call CtrlPWithSearchText(expand('<cfile>'), '')<CR>
-
-" Don't change working directory
-let g:ctrlp_working_path_mode = 0
-
-" Ignore this files/dirs
-let g:ctrlp_custom_ignore = {
-                   \ 'dir': '\v[\/](\.git|\.hg|\.svn|node_modules|.history)$',
-                   \ 'file': '\.pyc$\|\.pyo$',
-                   \ }
-
-" Update the search once the user ends typing.
-let g:ctrlp_lazy_update = 2
-" The Silver Searcher
-
 " theme
 syntax enable
 if (has("termguicolors"))
   set termguicolors
  endif
 
-
-let g:UltiSnipsExpandTrigger="<C-l>"
-
 " colors
-let g:rainbow_active = 1
 let g:diminactive_use_syntax = 1
+let g:diminactive_enable_focus = 1
 let g:diminactive_use_colorcolumn = 0
 colorscheme OceanicNext
 
@@ -198,28 +134,8 @@ let grepper ={}
 let grepper.tools = ['rg', 'git', 'grep']
 nnoremap <leader>* :Grepper -tool git -open -switch -cword -noprompt<cr>
 
-set grepprg=rg\ -i\ -H\ --no-heading\ --vimgrep
-set grepformat=$f:$l:%c:%m
-
-" youcompleteme
-let g:ycm_filetype_blacklist = {}
-
-" ultisnips
-let g:UltiSnipsUsePythonVersion = 3
-let g:UltiSnipsSnippetsDir="~/.vim/snips/"
-let g:UltiSnipsSnippetDirectories=['UltiSnips', 'snips']
-let g:UltiSnipsEditSplit = 'vertical'
-map <F5> :UltiSnipsEdit<CR>
-
-" make YCM compatible with UltiSnips (using supertab)
-" let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
-" let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-" let g:SuperTabDefaultCompletionType = '<C-n>'
-
-" better key bindings for UltiSnipsExpandTrigger
-" let g:UltiSnipsExpandTrigger = "<tab>"
-" let g:UltiSnipsJumpForwardTrigger = "<tab>"
-" let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+" set grepprg=rg\ -i\ -H\ --no-heading\ --vimgrep
+" set grepformat=$f:$l:%c:%m
 
 function! SetupCommandAlias(input, output)
   exec 'cabbrev <expr> '.a:input
@@ -227,8 +143,19 @@ function! SetupCommandAlias(input, output)
         \ .'? ("'.a:output.'") : ("'.a:input.'"))'
 endfunction
 
+" abbreviations
+ab cosnt const
+ab teh the
+ab gclog [*] changelog update
+ab gcmrg 'master' merged into ''
+
+" macros
+" append date
+let @d = ':s/$/\=strftime(''%b %d, %Y'')_€kb/'
+
 " command abbreviations
-call SetupCommandAlias("grep", "GrepperRg -i")
+call SetupCommandAlias("grep", "GrepperRg")
+call SetupCommandAlias("??", "GrepperRg")
 call SetupCommandAlias("G", "Git")
 call SetupCommandAlias("npm", "Dispatch npm run")
 call SetupCommandAlias("yarn", "Dispatch yarn")
@@ -284,8 +211,6 @@ let g:gitgutter_sign_modified = emoji#for('heavy_division_sign')
 let g:gitgutter_sign_removed_first_line = emoji#for('heavy_minus_sign')
 let g:gitgutter_sign_removed = emoji#for('heavy_minus_sign')
 let g:gitgutter_sign_modified_removed = emoji#for('heavy_dollar_sign')
-
-call SetupCommandAlias("emoji", "%s/:\([^:]\+\):/\=emoji#for(submatch(1), submatch(0))/g")
 
 let g:vim_markdown_folding_disabled = 1
 set conceallevel=2
@@ -458,5 +383,21 @@ set foldnestmax=10
 nnoremap + zo
 nnoremap - zc
 
+"easymotion
+nmap f <Plug>(easymotion-overwin-f2)
+
 " file commands
-map <leader>f :vertical wincmd f<CR>
+map gF :vertical wincmd f<CR>
+
+"BufOnly
+nnoremap <silent> <leader>b :BufOnly<cr>
+
+"hardtime
+let g:hardtime_default_on = 1
+
+" D to delete line above, C to change line above
+nnoremap D kdd
+nnoremap C kcc
+
+" local settings - keep this last line
+silent! so .vimlocal
