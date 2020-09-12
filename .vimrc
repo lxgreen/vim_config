@@ -363,7 +363,9 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
 " prettier
-let g:prettier#autoformat_config_present = 1
+let g:prettier#autoformatconfig_present = 1
+let g:prettier#autoformat_require_pragma = 0
+let g:prettier#autoformat_config_files = ['prettier.json', 'prettier.config.js', 'prettierrc.js']
 
 " localsearch
 nmap <leader>/ <Plug>localsearch_toggle
