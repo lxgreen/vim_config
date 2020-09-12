@@ -39,9 +39,10 @@ Plug 'tmux-plugins/vim-tmux'
 Plug 'jacquesbh/vim-showmarks'                                    " show marks command
 Plug 'mox-mox/vim-localsearch'                                    " search per window mode
 Plug 'jrudess/vim-foldtext'
-Plug 'mcchrish/nnn.vim'                                           " file picker -- replace by fff or lf?
+Plug 'francoiscabrol/ranger.vim'                                  " file manager
+Plug 'rbgrouleff/bclose.vim'
 Plug 'bogado/file-line'                                           " `vim file:line` opens the file with caret on the line
-Plug 'vim-scripts/BufOnly.vim'                                    " kill all buffers except current command
+Plug 'vim-scripts/BufOnly.vim'                                    " kill all buffers except current one
 Plug 'takac/vim-hardtime'                                         " navigation habits
 call plug#end()
 
@@ -72,16 +73,22 @@ set ic
 set diffopt+=vertical  " diff open vertically
 set laststatus=2
 set t_Co=256
+set nofoldenable "folding
+set fdm=syntax
+set foldnestmax=10
+set hidden " coc.nvim alignments
+set signcolumn=yes
+set cmdheight=2
+set updatetime=300
+
 
 let g:airline#extensions#tabline#enabled=1
 let g:airline#extensions#localsearch#enabled=1
 let g:airline_theme='jellybeans'
-
 let g:airline_section_x=' %{ObsessionStatus(">","||")}'
 let g:airline_section_y=''
 let g:airline_inactive_collapse=1
 let g:airline_skip_empty_sections = 1
-
 let g:airline_powerline_fonts = 1
 let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
@@ -108,15 +115,15 @@ colorscheme OceanicNext
 let g:prosession_on_startup=1
 let g:prosession_default_session=1
 
-" mappings
-nmap <silent> <leader>cp :PlugInstall<cr>
-nnoremap <silent> <leader>cv :vsplit ~/.vimrc<cr>
+" config mappings
 nnoremap <silent> <leader>zz :tabe ~/.zshrc <bar> :lcd ~/.zsh<cr>
-" Source my .vimrc file (This reloads the configuration)
+nmap <silent> <leader>cp :PlugInstall<cr>
+nnoremap <silent> <leader>cv :vsplit ~/.vimrc <bar> :lcd ~/vim_config<cr>
 nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
 nnoremap <silent> <leader>tt :tabe ~/.tmux.conf<cr>
+nnoremap <silent> <leader>ww :tabe ~/.yabairc <bar> :vsplit ~/.skhdrc<cr>
 
-" windows
+" window management
 nnoremap <Right> <C-w>l
 nnoremap <Left> <C-w>h
 nnoremap <Up> <C-w>k
@@ -125,6 +132,15 @@ nnoremap <silent><C-Up> :resize +5<cr>
 nnoremap <silent> <C-Down> :resize -5<cr>
 nnoremap <silent> <C-Left> :vertical resize -20<cr>
 nnoremap <silent> <C-Right> :vertical resize +20<cr>
+
+" editing mappings
+nnoremap D kdd
+nnoremap C kcc
+nnoremap + zo
+nnoremap - zc
+map gF :vertical wincmd f<CR> " file commands
+
+
 " code
 " log expression under cursor
 nmap <Leader>cl yiwoconsole.log('<c-r>":', <c-r>");<Esc>^
@@ -133,9 +149,6 @@ nmap <Leader>cl yiwoconsole.log('<c-r>":', <c-r>");<Esc>^
 let grepper ={}
 let grepper.tools = ['rg', 'git', 'grep']
 nnoremap <leader>* :Grepper -tool git -open -switch -cword -noprompt<cr>
-
-" set grepprg=rg\ -i\ -H\ --no-heading\ --vimgrep
-" set grepformat=$f:$l:%c:%m
 
 function! SetupCommandAlias(input, output)
   exec 'cabbrev <expr> '.a:input
@@ -226,12 +239,7 @@ command! -register CopyMatches call CopyMatches(<q-reg>)
 
 " coc.nvim
 let g:coc_global_extensions = ['coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-eslint', 'coc-snippets', 'coc-tslint', 'coc-stylelint', 'coc-cssmodules', 'coc-marketplace']
-set signcolumn=yes
 
-" TextEdit might fail if hidden is not set.
-set hidden
-set cmdheight=2
-set updatetime=300
 
 " Use tab for trigger completion with characters ahead and navigate.
 inoremap <silent><expr> <TAB>
@@ -354,6 +362,9 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
+" prettier
+let g:prettier#autoformat_config_present = 1
+
 " localsearch
 nmap <leader>/ <Plug>localsearch_toggle
 
@@ -376,18 +387,10 @@ let g:EasyClipUsePasteToggleDefaults = 0
 nmap <c-f> <plug>EasyClipSwapPasteForward
 nmap <c-d> <plug>EasyClipSwapPasteBackwards
 
-"folding
-set nofoldenable
-set fdm=syntax
-set foldnestmax=10
-nnoremap + zo
-nnoremap - zc
 
 "easymotion
 nmap f <Plug>(easymotion-overwin-f2)
 
-" file commands
-map gF :vertical wincmd f<CR>
 
 "BufOnly
 nnoremap <silent> <leader>b :BufOnly<cr>
@@ -395,9 +398,11 @@ nnoremap <silent> <leader>b :BufOnly<cr>
 "hardtime
 let g:hardtime_default_on = 1
 
-" D to delete line above, C to change line above
-nnoremap D kdd
-nnoremap C kcc
+" ranger
+let g:ranger_map_keys = 0
+map <silent> <leader>o :Ranger<CR>
+let g:ranger_replace_netrw = 1
+let g:ranger_command_override = 'ranger --cmd "set show_hidden=true"'
 
 " local settings - keep this last line
 silent! so .vimlocal
