@@ -1,52 +1,53 @@
 call plug#begin('~/.local/share/nvim/plugged')
-Plug 'zhaocai/goldenview.vim'                                     " autoresize panes
-Plug 'mhartington/oceanic-next'                                   " theme
-Plug 'arthurxavierx/vim-caser'                                    " switch case (kebab, camel, etc)
-Plug 'tpope/vim-fugitive'                                         " git essentials
+Plug 'zhaocai/goldenview.vim'                                      " autoresize panes
+Plug 'mhartington/oceanic-next'                                    " theme
+Plug 'lifepillar/vim-solarized8'
+Plug 'arthurxavierx/vim-caser'                                     " switch case (kebab, camel, etc)
+Plug 'tpope/vim-fugitive'                                          " git essentials
 Plug 'airblade/vim-gitgutter'
-Plug 'junegunn/vim-emoji'                                         " status
+Plug 'junegunn/vim-emoji'                                          " status
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " search
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }  " search
 Plug 'junegunn/fzf.vim'
-Plug 'tomtom/tcomment_vim'                                        " comment on gc
-Plug 'sheerun/vim-polyglot'                                       " syntax highlight
-Plug 'tpope/vim-surround'                                         " surround with brakets, tags, etc
-Plug 'neoclide/coc.nvim', {'branch': 'release'}                   " dev essentials
+Plug 'tomtom/tcomment_vim'                                         " comment on gc
+Plug 'sheerun/vim-polyglot'                                        " syntax highlight
+Plug 'tpope/vim-surround'                                          " surround with brakets, tags, etc
+Plug 'raimondi/delimitmate'                                        " parens autocomplete
+Plug 'neoclide/coc.nvim', {'branch': 'release'}                    " dev essentials
 Plug 'wakatime/vim-wakatime'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-Plug 'tpope/vim-abolish'                                          " substitution
-Plug 'tpope/vim-obsession'                                        " session management
-                                                                  " Plug 'dhruvasagar/vim-prosession'
-Plug 'svermeulen/vim-easyclip'                                    " yank to clipboard, 'd' for delete, 'x' for cut
-Plug 'tpope/vim-repeat'                                           " plugins '.' operator
-Plug 'vim-scripts/grep.vim'                                       " find in files
+Plug 'tpope/vim-abolish'                                           " substitution
+Plug 'tpope/vim-obsession'                                         " session management
+Plug 'svermeulen/vim-easyclip'                                     " yank to clipboard, 'd' for delete, 'x' for cut
+Plug 'tpope/vim-repeat'                                            " plugins '.' operator
+Plug 'vim-scripts/grep.vim'                                        " find in files
 Plug 'mhinz/vim-grepper'
 Plug 'chrisbra/unicode.vim'
-Plug 'blueyed/vim-diminactive'                                    " inactive window indication
-Plug 'tpope/vim-dispatch'                                         " compiler run
+Plug 'blueyed/vim-diminactive'                                     " inactive window indication
+Plug 'tpope/vim-dispatch'                                          " compiler run
 Plug 'radenling/vim-dispatch-neovim'
-Plug 'tpope/vim-unimpaired'                                       " lots of key shortcuts
-Plug 'janko/vim-test'                                             " tests
+Plug 'tpope/vim-unimpaired'                                        " lots of key shortcuts
+Plug 'janko/vim-test'                                              " tests
 Plug 'craigdallimore/vim-jest-cli', { 'for': 'javascript' }
-Plug 'chaoren/vim-wordmotion'                                     " navigate inside camelCase, kebab-case, etc
-Plug 'elentok/plaintasks.vim'                                     " todo list: + adds task, = marks it complete
-Plug 'freitass/todo.txt-vim'                                      " todo.txt format tasks
+Plug 'chaoren/vim-wordmotion'                                      " navigate inside camelCase, kebab-case, etc
+Plug 'elentok/plaintasks.vim'                                      " todo list: + adds task, = marks it complete
+Plug 'freitass/todo.txt-vim'                                       " todo.txt format tasks
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
-Plug 'easymotion/vim-easymotion'                                  " 'f' for quick navigation (cross-window)
-Plug 'tmux-plugins/vim-tmux-focus-events'                         " essential for tmux
+Plug 'easymotion/vim-easymotion'                                   " 'f' for quick navigation (cross-window)
+Plug 'tmux-plugins/vim-tmux-focus-events'                          " essential for tmux
 Plug 'tmux-plugins/vim-tmux'
-Plug 'jacquesbh/vim-showmarks'                                    " show marks command
-Plug 'mox-mox/vim-localsearch'                                    " search per window mode
+Plug 'jacquesbh/vim-showmarks'                                     " show marks command
+Plug 'mox-mox/vim-localsearch'                                     " search per window mode
 Plug 'jrudess/vim-foldtext'
-Plug 'francoiscabrol/ranger.vim'                                  " file manager
+Plug 'francoiscabrol/ranger.vim'                                   " file manager
 Plug 'rbgrouleff/bclose.vim'
-Plug 'bogado/file-line'                                           " `vim file:line` opens the file with caret on the line
-Plug 'vim-scripts/BufOnly.vim'                                    " kill all buffers except current one
-Plug 'takac/vim-hardtime'                                         " navigation habits
-Plug 'vim-scripts/Rename2'                                        " rename current file
-Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } } " nvim for firefox
+Plug 'bogado/file-line'                                            " `vim file:line` opens the file with caret on the line
+Plug 'vim-scripts/BufOnly.vim'                                     " kill all buffers except current one
+Plug 'takac/vim-hardtime'                                          " navigation habits
+Plug 'vim-scripts/Rename2'                                         " rename current file
+Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }  " nvim for firefox
 call plug#end()
 
 if !exists('g:started_by_firenvim')
@@ -114,19 +115,33 @@ if !exists('g:started_by_firenvim')
   let g:diminactive_use_syntax = 1
   let g:diminactive_enable_focus = 1
   let g:diminactive_use_colorcolumn = 0
-  colorscheme OceanicNext
 
-  " sessions
-  " let g:prosession_on_startup=1
-  " let g:prosession_default_session=1
+  " theme
+  colorscheme solarized8_high
 
+  function! SetColorScheme()
+    " requires macos, works in catalina
+    let @z = system("defaults read -g AppleInterfaceStyle | grep Dark")
+    if matchstr(@z, 'Dark') == 'Dark'
+      set background=dark
+    else
+      set background=light
+    endif
+  endfunction
+
+  if (executable('defaults'))
+    call SetColorScheme()
+  endif
+  "
   " config mappings
   nnoremap <silent> <leader>zz :tabe ~/.zshrc <bar> :lcd ~/.zsh<cr>
   nmap <silent> <leader>cp :PlugInstall<cr>
   nnoremap <silent> <leader>cv :vsplit ~/.vimrc <bar> :lcd ~/vim_config<cr>
   nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
+  nnoremap <silent> <F5> :source $MYVIMRC<cr>
   nnoremap <silent> <leader>tt :tabe ~/.tmux.conf<cr>
   nnoremap <silent> <leader>ww :tabe ~/.yabairc <bar> :vsplit ~/.skhdrc<cr>
+  nnoremap <silent> <leader>xx :tabe ~/IDrive-Sync/todo.txt<cr>
 
   " window management
   nnoremap <Right> <C-w>l
@@ -423,6 +438,7 @@ if !exists('g:started_by_firenvim')
 
   " local settings - keep this last line
   silent! so .vimlocal
+
 else
   set cmdheight=2
   au BufEnter github.com_*.txt set filetype=markdown
