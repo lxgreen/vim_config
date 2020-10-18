@@ -89,7 +89,7 @@ if !exists('g:started_by_firenvim')
 
   let g:airline#extensions#tabline#enabled=1
   let g:airline#extensions#localsearch#enabled=1
-  let g:airline_theme='jellybeans'
+  let g:airline_theme='solarized'
   let g:airline_section_x=' %{ObsessionStatus(">","||")}'
   let g:airline_section_y=''
   let g:airline_inactive_collapse=1
@@ -135,7 +135,7 @@ if !exists('g:started_by_firenvim')
   "
   " config mappings
   nnoremap <silent> <leader>zz :tabe ~/.zshrc <bar> :lcd ~/.zsh<cr>
-  nmap <silent> <leader>cp :PlugInstall<cr>
+  nnoremap <silent> <leader>cp :PlugInstall<cr>
   nnoremap <silent> <leader>cv :vsplit ~/.vimrc <bar> :lcd ~/vim_config<cr>
   nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
   nnoremap <silent> <F5> :source $MYVIMRC<cr>
@@ -158,12 +158,12 @@ if !exists('g:started_by_firenvim')
   nnoremap C kcc
   nnoremap + zo
   nnoremap - zc
-  map gF :vertical wincmd f<CR> " file commands
+  noremap gF :vertical wincmd f<CR> " file commands
 
 
   " code
   " log expression under cursor
-  nmap <Leader>cl yiwoconsole.log('<c-r>":', <c-r>");<Esc>^
+  nnoremap <Leader>cl yiwoconsole.log('<c-r>":', <c-r>");<Esc>^
   "
   " grep the word under cursor
   let grepper ={}
@@ -432,7 +432,7 @@ if !exists('g:started_by_firenvim')
 
   " ranger
   let g:ranger_map_keys = 0
-  map <silent> <leader>o :Ranger<CR>
+  noremap <silent> <leader>o :Ranger<CR>
   let g:ranger_replace_netrw = 1
   let g:ranger_command_override = 'ranger --cmd "set show_hidden=true"'
 
