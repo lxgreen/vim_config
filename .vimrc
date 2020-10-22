@@ -1,3 +1,4 @@
+" Plugins {{{
 call plug#begin('~/.local/share/nvim/plugged')
 Plug 'zhaocai/goldenview.vim'                                      " autoresize panes
 Plug 'mhartington/oceanic-next'                                    " theme
@@ -49,78 +50,136 @@ Plug 'takac/vim-hardtime'                                          " navigation 
 Plug 'vim-scripts/Rename2'                                         " rename current file
 Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }  " nvim for firefox
 call plug#end()
+" }}}
+
+" Basic options {{{
+set nocompatible                                  " don't care about vi
+filetype plugin indent on                         " file type detection, plugin for type, indent for type
+set nu rnu                                        " relative line numbers
+set ruler                                         " color column
+set colorcolumn=120
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab                                     " insert space on tab
+set list                                          " display invisible chars
+set listchars=tab:>-,trail:~,extends:>,precedes:<
+set hlsearch
+set incsearch
+set autoindent
+set smartindent
+set showcmd                                       " command line visible
+set backupdir=$TEMP//
+set directory=$TEMP//
+set nobackup
+set nowritebackup
+set guifont=Fira\ Code:h13
+set linespace=5
+set encoding=UTF-8
+set ic
+set diffopt+=vertical                             " diff open vertically
+set laststatus=2
+set t_Co=256
+set nofoldenable                                  " folding
+set fdm=syntax
+set foldnestmax=10
+set hidden                                        " coc.nvim alignments
+set signcolumn=yes
+set cmdheight=2
+set updatetime=300
+colorscheme solarized8_high " theme
+
+" }}}
+
+" folding and editing mappings {{{
+" wrapping mappings based on surround plugin
+nmap <space>' ysiw"
+nmap <leader>' ysiw'
+nmap <space>[ ysiw]
+nmap <space>] ysiw]
+nmap <space>9 ysiw)
+nmap <space>1 ysiw)
+nmap <leader>[ ysiw}
+nmap <leader>] ysiw}
+nmap <space>` ysiw`
+nmap <space>. ysiw>
+nmap <space>, ysiw>
+" editing
+nnoremap D kdd
+nnoremap C kcc
+nnoremap + zo
+nnoremap - zc
+syntax enable
+" }}}
+
+" Airline plugin settings {{{
+let g:airline#extensions#tabline#enabled=1
+let g:airline#extensions#localsearch#enabled=1
+let g:airline_theme='solarized'
+let g:airline_section_x=' %{ObsessionStatus(">","||")}'
+let g:airline_section_y=''
+let g:airline_inactive_collapse=1
+let g:airline_skip_empty_sections = 1
+let g:airline_powerline_fonts = 1
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+" }}}
+
+" easyclip settings {{{
+  let g:EasyClipAlwaysMoveCursorToEndOfPaste=1
+  " yank/paste with system clipboard by default
+  set clipboard=unnamed
+  " yank history @ ~/.easyclip
+  let g:EasyClipShareYanks=1
+  let g:EasyClipShareYanksFile='.easyclip'
+  let g:EasyClipShareYanksDirectory='$HOME'
+  " `d` now deletes text completely, `x` -- cuts
+  let g:EasyClipUseCutDefaults = 0
+  nmap x <Plug>MoveMotionPlug
+  xmap x <Plug>MoveMotionXPlug
+  nmap xx <Plug>MoveMotionLinePlug
+  " `s` for substitution
+  let g:EasyClipUseSubstituteDefaults=1
+  let g:EasyClipUsePasteToggleDefaults = 0
+  nmap <c-f> <plug>EasyClipSwapPasteForward
+  nmap <c-d> <plug>EasyClipSwapPasteBackwards
+" }}}
+
+" easymotion {{{
+  nmap f <Plug>(easymotion-overwin-f2)
+" }}}
 
 if !exists('g:started_by_firenvim')
-  set nocompatible                                  " don't care about vi
-  filetype plugin indent on                         " file type detection, plugin for type, indent for type
-  set nu rnu                                        " relative line numbers
-  set ruler                                         " color column
-  set colorcolumn=120
-  set tabstop=2
-  set shiftwidth=2
-  set softtabstop=2
-  set expandtab                                     " insert space on tab
-  set list                                          " display invisible chars
-  set listchars=tab:>-,trail:~,extends:>,precedes:<
-  set hlsearch
-  set incsearch
-  set autoindent
-  set smartindent
-  set showcmd                                       " command line visible
-  set backupdir=$TEMP//
-  set directory=$TEMP//
-  set nobackup
-  set nowritebackup
-  set guifont=Fira\ Code:h13
-  set linespace=5
-  set encoding=UTF-8
-  set ic
-  set diffopt+=vertical                             " diff open vertically
-  set laststatus=2
-  set t_Co=256
-  set nofoldenable                                  " folding
-  set fdm=syntax
-  set foldnestmax=10
-  set hidden                                        " coc.nvim alignments
-  set signcolumn=yes
-  set cmdheight=2
-  set updatetime=300
 
+" standalone editor settings {{{
+  set undodir=$HOME/.local/share/nvim/undo
+  set undofile
+" }}}
 
-  let g:airline#extensions#tabline#enabled=1
-  let g:airline#extensions#localsearch#enabled=1
-  let g:airline_theme='solarized'
-  let g:airline_section_x=' %{ObsessionStatus(">","||")}'
-  let g:airline_section_y=''
-  let g:airline_inactive_collapse=1
-  let g:airline_skip_empty_sections = 1
-  let g:airline_powerline_fonts = 1
-  let g:airline_left_sep = ''
-  let g:airline_left_alt_sep = ''
-  let g:airline_right_sep = ''
-  let g:airline_right_alt_sep = ''
+" standalone editor mappings {{{
+  noremap gF :vertical wincmd f<CR> " file commands
+" }}}
 
-  "FZF Configuration -----------------------------------------------------------
+" FZF plugin settings {{{
   nnoremap <F2> :FZF<CR>
   nnoremap ,e :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
   nnoremap ,b :Buffers<CR>
+ " }}}
 
-  " theme
-  syntax enable
+" Dynamic theme and platofrm dependent stuff {{{
   if (has("termguicolors"))
     set termguicolors
-   endif
+  endif
 
   " colors
   let g:diminactive_use_syntax = 1
   let g:diminactive_enable_focus = 1
   let g:diminactive_use_colorcolumn = 0
 
-  " theme
-  colorscheme solarized8_high
-
   function! SetColorScheme()
-    " requires macos, works in catalina
+    " requires macos, works in catalina -- use env var instead
     let @z = system("defaults read -g AppleInterfaceStyle | grep Dark")
     if matchstr(@z, 'Dark') == 'Dark'
       set background=dark
@@ -132,8 +191,9 @@ if !exists('g:started_by_firenvim')
   if (executable('defaults'))
     call SetColorScheme()
   endif
-  "
-  " config mappings
+" }}}
+
+" dotfile and todo access mappings {{{
   nnoremap <silent> <leader>zz :tabe ~/.zshrc <bar> :lcd ~/.zsh<cr>
   nnoremap <silent> <leader>cp :PlugInstall<cr>
   nnoremap <silent> <leader>cv :vsplit ~/.vimrc <bar> :lcd ~/vim_config<cr>
@@ -141,9 +201,10 @@ if !exists('g:started_by_firenvim')
   nnoremap <silent> <F5> :source $MYVIMRC<cr>
   nnoremap <silent> <leader>tt :tabe ~/.tmux.conf<cr>
   nnoremap <silent> <leader>ww :tabe ~/.yabairc <bar> :vsplit ~/.skhdrc<cr>
-  nnoremap <silent> <leader>xx :tabe ~/IDrive-Sync/todo.txt<cr>
+  nnoremap <silent> <leader>xx :tabe ~/IDrive-Sync/done.txt <bar> :vs ~/IDrive-Sync/todo.txt<cr>
+" }}}
 
-  " window management
+" window management mappings {{{
   nnoremap <Right> <C-w>l
   nnoremap <Left> <C-w>h
   nnoremap <Up> <C-w>k
@@ -152,39 +213,62 @@ if !exists('g:started_by_firenvim')
   nnoremap <silent> <C-Down> :resize -5<cr>
   nnoremap <silent> <C-Left> :vertical resize -20<cr>
   nnoremap <silent> <C-Right> :vertical resize +20<cr>
+" }}}
 
-  " editing mappings
-  nnoremap D kdd
-  nnoremap C kcc
-  nnoremap + zo
-  nnoremap - zc
-  noremap gF :vertical wincmd f<CR> " file commands
+ "autocommands {{{
+  augroup auto_commands
+    autocmd!
+    autocmd BufWritePre /tmp/* setlocal noundofile
+    " auto-close preview window
+    autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
+    autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+    autocmd BufRead,BufNewFile *.json set filetype=json
+    autocmd BufRead,BufNewFile *.md set filetype=markdown
+    " auto save session on exit
+    autocmd VimLeave * call SaveCurrentSession()
+    autocmd FileType vim setlocal foldmethod=marker
+    autocmd BufWritePre *todo.txt :normal \s+
+  augroup END
+" }}}
 
-
-  " code
-  " log expression under cursor
-  nnoremap <Leader>cl yiwoconsole.log('<c-r>":', <c-r>");<Esc>^
-  "
-  " grep the word under cursor
+  " grepper settings {{{
   let grepper ={}
   let grepper.tools = ['rg', 'git', 'grep']
   nnoremap <leader>* :Grepper -tool git -open -switch -cword -noprompt<cr>
+" }}}
+
+" functions {{{
+  function! CopyMatches(reg)
+    let hits = []
+    %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
+    let reg = empty(a:reg) ? '+' : a:reg
+    execute 'let @'.reg.' = join(hits, "\n") . "\n"'
+  endfunction
+
+  function! SaveCurrentSession()
+    if v:this_session != ""
+      exe "mksession! " . v:this_session
+    endif
+  endfunction
 
   function! SetupCommandAlias(input, output)
     exec 'cabbrev <expr> '.a:input
           \ .' ((getcmdtype() is# ":" && getcmdline() is# "'.a:input.'")'
           \ .'? ("'.a:output.'") : ("'.a:input.'"))'
   endfunction
+" }}}
 
-  " abbreviations
-  ab cosnt const
-  ab teh the
-  ab gclog [*] changelog update
-  ab gcmrg 'master' merged into ''
-
-  " macros
+" macros {{{
   " append date
   let @d = ':s/$/\=strftime(''%b %d, %Y'')_�kb/'
+" }}}
+
+" commands {{{
+  command! -register CopyMatches call CopyMatches(<q-reg>)
+  command! -nargs=1 Ren execute "!mv %:p %:p:h/<args>" <bar> execute "e <args>"
+  command! VTerm :silent :vsplit | :terminal
+  command! STerm :silent :split | :terminal
+  command! TTerm :silent :tabe | :terminal
 
   " command abbreviations
   call SetupCommandAlias("grep", "GrepperRg")
@@ -197,21 +281,18 @@ if !exists('g:started_by_firenvim')
   call SetupCommandAlias("blame", "Gblame")
   call SetupCommandAlias("revert", "Git checkout %")
   call SetupCommandAlias("gcm", "Git checkout  master")
-  if !exists(":VTerm")
-    command VTerm :silent :vsplit | :terminal
-    command STerm :silent :split | :terminal
-    command TTerm :silent :tabe | :terminal
+  call SetupCommandAlias("term", "terminal")
+  call SetupCommandAlias("vterm", "VTerm")
+  call SetupCommandAlias("tterm", "TTerm")
+  call SetupCommandAlias("sterm", "STerm")
+" }}}
 
-    call SetupCommandAlias("term", "terminal")
-    call SetupCommandAlias("vterm", "VTerm")
-    call SetupCommandAlias("tterm", "TTerm")
-    call SetupCommandAlias("sterm", "STerm")
-  endif
-
+" Dispatch settings {{{
   let test#strategy = "dispatch"
   let g:dispatch_compilers = { 'jest': 'jest-cli' }
+" }}}
 
-  " terminal
+" terminal settings {{{
   if has('nvim')
     tnoremap <Esc> <C-\><C-n>
     tnoremap <C-v><Esc> <Esc>
@@ -222,51 +303,24 @@ if !exists('g:started_by_firenvim')
       let $VISUAL="nvr -cc vsplit --remote-wait + 'set bufhidden=wipe'"
     endif
   endif
+" }}}
 
-  set undodir=$HOME/.local/share/nvim/undo
-  set undofile
-
-  augroup vimrc
-    autocmd!
-    autocmd BufWritePre /tmp/* setlocal noundofile
-  augroup END
-
-  " auto-close preview window
-  autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
-  autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-
-  au! BufRead,BufNewFile *.json set filetype=json
-  au! BufRead,BufNewFile *.md set filetype=markdown
-
-  " auto save session on exit
-  au VimLeave * call SaveCurrentSession()
-  function! SaveCurrentSession()
-    if v:this_session != ""
-      exe "mksession! " . v:this_session
-    endif
-  endfunction
-
-  " gitgutter + emoji
+" gitgutter settings {{{
   let g:gitgutter_sign_added = emoji#for('heavy_plus_sign')
   let g:gitgutter_sign_modified = emoji#for('heavy_division_sign')
   let g:gitgutter_sign_removed_first_line = emoji#for('heavy_minus_sign')
   let g:gitgutter_sign_removed = emoji#for('heavy_minus_sign')
   let g:gitgutter_sign_modified_removed = emoji#for('heavy_dollar_sign')
   let g:gitgutter_diff_args = '-w'
+" }}}
 
+" markdown settings {{{
   let g:vim_markdown_folding_disabled = 1
   set conceallevel=2
   let g:vim_markdown_conceal = 0
+" }}}
 
-  function! CopyMatches(reg)
-    let hits = []
-    %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
-    let reg = empty(a:reg) ? '+' : a:reg
-    execute 'let @'.reg.' = join(hits, "\n") . "\n"'
-  endfunction
-  command! -register CopyMatches call CopyMatches(<q-reg>)
-
-  " coc.nvim
+" coc.nvim plugin settings {{{
   let g:coc_global_extensions = ['coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-eslint', 'coc-snippets', 'coc-tslint', 'coc-stylelint', 'coc-cssmodules', 'coc-marketplace']
 
 
@@ -315,9 +369,6 @@ if !exists('g:started_by_firenvim')
     endif
   endfunction
 
-  " Highlight the symbol and its references when holding the cursor.
-  autocmd CursorHold * silent call CocActionAsync('highlight')
-
   " Symbol renaming.
   nmap <leader>rn <Plug>(coc-rename)
 
@@ -327,6 +378,8 @@ if !exists('g:started_by_firenvim')
 
   augroup mygroup
     autocmd!
+    " Highlight the symbol and its references when holding the cursor.
+    autocmd CursorHold * silent call CocActionAsync('highlight')
     " Setup formatexpr specified filetype(s).
     autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
     " Update signature help on jump placeholder.
@@ -390,71 +443,63 @@ if !exists('g:started_by_firenvim')
   nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
   " Resume latest coc list.
   nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+" }}}
 
-  " prettier
+" prettier {{{
   let g:prettier#autoformatconfig_present = 1
   let g:prettier#autoformat_require_pragma = 0
   let g:prettier#autoformat_config_files = ['prettier.json', 'prettier.config.js', 'prettierrc.js']
+" }}}
 
-  " localsearch
+" localsearch mappings {{{
   nmap <leader>/ <Plug>localsearch_toggle
+" }}}
 
-  " easyclip
-  let g:EasyClipAlwaysMoveCursorToEndOfPaste=1
-  " yank/paste with system clipboard by default
-  set clipboard=unnamed
-  " yank history @ ~/.easyclip
-  let g:EasyClipShareYanks=1
-  let g:EasyClipShareYanksFile='.easyclip'
-  let g:EasyClipShareYanksDirectory='$HOME'
-  " `d` now deletes text completely, `x` -- cuts
-  let g:EasyClipUseCutDefaults = 0
-  nmap x <Plug>MoveMotionPlug
-  xmap x <Plug>MoveMotionXPlug
-  nmap xx <Plug>MoveMotionLinePlug
-  " `s` for substitution
-  let g:EasyClipUseSubstituteDefaults=1
-  let g:EasyClipUsePasteToggleDefaults = 0
-  nmap <c-f> <plug>EasyClipSwapPasteForward
-  nmap <c-d> <plug>EasyClipSwapPasteBackwards
-
-
-  "easymotion
-  nmap f <Plug>(easymotion-overwin-f2)
-
-
-  "BufOnly
+" BufOnly mappings {{{
   nnoremap <silent> <leader>b :BufOnly<cr>
+" }}}
 
-  "hardtime
+" hardtime settings {{{
   let g:hardtime_default_on = 1
   let g:list_of_normal_keys = ["h", "j", "k", "l"]
+" }}}
 
-  " ranger
+" ranger settings {{{
   let g:ranger_map_keys = 0
   noremap <silent> <leader>o :Ranger<CR>
   let g:ranger_replace_netrw = 1
   let g:ranger_command_override = 'ranger --cmd "set show_hidden=true"'
+" }}}
 
   " local settings - keep this last line
   silent! so .vimlocal
 
 else
-  set cmdheight=2
-  au BufEnter github.com_*.txt set filetype=markdown
+" file types by url {{{
+  augroup firenvim
+    autocmd!
+    au BufEnter github.com_*.txt set filetype=markdown
+  augroup END
+"}}}
+
+" config {{{
   let g:firenvim_config = {
-    \ 'globalSettings': {
+        \ 'globalSettings': {
         \ 'alt': 'all',
-    \  },
-    \ 'localSettings': {
+        \  },
+        \ 'localSettings': {
         \ '.*': {
-            \ 'cmdline': 'neovim',
-            \ 'priority': 0,
-            \ 'selector': 'textarea',
-            \ 'takeover': 'always',
+        \ 'cmdline': 'neovim',
+        \ 'priority': 0,
+        \ 'selector': 'textarea',
+        \ 'takeover': 'always',
         \ },
-    \ }
-\ }
+        \ }
+        \ }
+" }}}
+
+" URL specific overrides {{{
   let fc = g:firenvim_config['localSettings']
   let fc['https?://.*asana\.com'] = { 'takeover': 'never', 'priority': 1 }
+" }}}
 endif
