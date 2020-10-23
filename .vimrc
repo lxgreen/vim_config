@@ -88,6 +88,7 @@ set signcolumn=yes
 set cmdheight=2
 set updatetime=300
 colorscheme solarized8_high " theme
+syntax enable
 
 " }}}
 
@@ -109,7 +110,6 @@ nnoremap D kdd
 nnoremap C kcc
 nnoremap + zo
 nnoremap - zc
-syntax enable
 " }}}
 
 " Airline plugin settings {{{
@@ -149,6 +149,12 @@ let g:airline_right_alt_sep = ''
 
 " easymotion {{{
   nmap f <Plug>(easymotion-overwin-f2)
+" }}}
+
+" markdown settings {{{
+  let g:vim_markdown_folding_disabled = 1
+  set conceallevel=2
+  let g:vim_markdown_conceal = 0
 " }}}
 
 if !exists('g:started_by_firenvim')
@@ -215,7 +221,7 @@ if !exists('g:started_by_firenvim')
   nnoremap <silent> <C-Right> :vertical resize +20<cr>
 " }}}
 
- "autocommands {{{
+" autocommands {{{
   augroup auto_commands
     autocmd!
     autocmd BufWritePre /tmp/* setlocal noundofile
@@ -228,10 +234,11 @@ if !exists('g:started_by_firenvim')
     autocmd VimLeave * call SaveCurrentSession()
     autocmd FileType vim setlocal foldmethod=marker
     autocmd BufWritePre *todo.txt :normal \s+
+    autocmd BufWritePre *.js,*.jsx,*.json,*.ts,*.tsx Prettier
   augroup END
 " }}}
 
-  " grepper settings {{{
+" grepper settings {{{
   let grepper ={}
   let grepper.tools = ['rg', 'git', 'grep']
   nnoremap <leader>* :Grepper -tool git -open -switch -cword -noprompt<cr>
@@ -312,12 +319,6 @@ if !exists('g:started_by_firenvim')
   let g:gitgutter_sign_removed = emoji#for('heavy_minus_sign')
   let g:gitgutter_sign_modified_removed = emoji#for('heavy_dollar_sign')
   let g:gitgutter_diff_args = '-w'
-" }}}
-
-" markdown settings {{{
-  let g:vim_markdown_folding_disabled = 1
-  set conceallevel=2
-  let g:vim_markdown_conceal = 0
 " }}}
 
 " coc.nvim plugin settings {{{
@@ -471,8 +472,9 @@ if !exists('g:started_by_firenvim')
   let g:ranger_command_override = 'ranger --cmd "set show_hidden=true"'
 " }}}
 
-  " local settings - keep this last line
+" local settings - keep this last {{{
   silent! so .vimlocal
+" }}}
 
 else
 " file types by url {{{
@@ -480,7 +482,7 @@ else
     autocmd!
     au BufEnter github.com_*.txt set filetype=markdown
   augroup END
-"}}}
+" }}}
 
 " config {{{
   let g:firenvim_config = {
