@@ -90,7 +90,9 @@ set updatetime=300
 let g:solarized_termcolors=16
 colorscheme solarized8_high " theme
 syntax enable
-
+set ignorecase
+set smartcase
+set inccommand=nosplit
 " }}}
 
 " folding and editing mappings {{{
@@ -239,6 +241,8 @@ if !exists('g:started_by_firenvim')
 " autocommands {{{
   augroup auto_commands
     autocmd!
+    autocmd InsertEnter * set norelativenumber
+    autocmd InsertLeave * set relativenumber
     autocmd BufWritePre /tmp/* setlocal noundofile
     " auto-close preview window
     autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
