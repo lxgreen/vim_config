@@ -87,6 +87,7 @@ set hidden                                        " coc.nvim alignments
 set signcolumn=yes
 set cmdheight=2
 set updatetime=300
+let g:solarized_termcolors=16
 colorscheme solarized8_high " theme
 syntax enable
 
@@ -169,6 +170,20 @@ if !exists('g:started_by_firenvim')
 " }}}
 
 " FZF plugin settings {{{
+  let g:fzf_colors =
+    \ { 'fg':      ['fg', 'Normal'],
+    \ 'bg':      ['bg', 'Normal'],
+    \ 'hl':      ['fg', 'Comment'],
+    \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+    \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+    \ 'hl+':     ['fg', 'Statement'],
+    \ 'info':    ['fg', 'PreProc'],
+    \ 'border':  ['fg', 'Ignore'],
+    \ 'prompt':  ['fg', 'Conditional'],
+    \ 'pointer': ['fg', 'Exception'],
+    \ 'marker':  ['fg', 'Keyword'],
+    \ 'spinner': ['fg', 'Label'],
+    \ 'header':  ['fg', 'Comment'] }
   nnoremap <F2> :FZF<CR>
   nnoremap ,e :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
   nnoremap ,b :Buffers<CR>
@@ -503,5 +518,6 @@ else
 " URL specific overrides {{{
   let fc = g:firenvim_config['localSettings']
   let fc['https?://.*asana\.com'] = { 'takeover': 'never', 'priority': 1 }
+  let fc['https?://.*mail\.google\.com'] = { 'takeover': 'never', 'priority': 1 }
 " }}}
 endif
