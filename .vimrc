@@ -1,54 +1,62 @@
 " Plugins {{{
 call plug#begin('~/.local/share/nvim/plugged')
-Plug 'zhaocai/goldenview.vim'                                      " autoresize panes
-Plug 'mhartington/oceanic-next'                                    " theme
+Plug 'zhaocai/goldenview.vim'                                     " autoresize panes
+Plug 'mhartington/oceanic-next'                                   " theme
 Plug 'lifepillar/vim-solarized8'
-Plug 'arthurxavierx/vim-caser'                                     " switch case (kebab, camel, etc)
-Plug 'tpope/vim-fugitive'                                          " git essentials
+Plug 'arthurxavierx/vim-caser'                                    " switch case (kebab, camel, etc)
+Plug 'tpope/vim-fugitive'                                         " git essentials
 Plug 'airblade/vim-gitgutter'
-Plug 'junegunn/vim-emoji'                                          " status
+Plug 'junegunn/vim-emoji'                                         " status
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }  " search
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " search
 Plug 'junegunn/fzf.vim'
-Plug 'tomtom/tcomment_vim'                                         " comment on gc
-Plug 'sheerun/vim-polyglot'                                        " syntax highlight
-Plug 'tpope/vim-surround'                                          " surround with brakets, tags, etc
-Plug 'raimondi/delimitmate'                                        " parens autocomplete
-Plug 'neoclide/coc.nvim', {'branch': 'release'}                    " dev essentials
+Plug 'tomtom/tcomment_vim'                                        " comment on gc
+Plug 'pangloss/vim-javascript'                                    " highlight
+Plug 'leafgarland/typescript-vim'
+Plug 'maxmellon/vim-jsx-pretty'
+Plug 'tpope/vim-surround'                                         " surround with brakets, tags, etc
+Plug 'raimondi/delimitmate'                                       " parens autocomplete
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}                   " dev essentials
+Plug 'dense-analysis/ale'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'wakatime/vim-wakatime'
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
-Plug 'tpope/vim-abolish'                                           " substitution
-Plug 'tpope/vim-obsession'                                         " session management
-Plug 'svermeulen/vim-easyclip'                                     " yank to clipboard, 'd' for delete, 'x' for cut
-Plug 'tpope/vim-repeat'                                            " plugins '.' operator
-Plug 'vim-scripts/grep.vim'                                        " find in files
+Plug 'tpope/vim-abolish'                                          " substitution
+Plug 'tpope/vim-obsession'                                        " session management
+Plug 'svermeulen/vim-easyclip'                                    " yank to clipboard, 'd' for delete, 'x' for cut
+Plug 'tpope/vim-repeat'                                           " plugins '.' operator
+Plug 'vim-scripts/grep.vim'                                       " find in files
 Plug 'mhinz/vim-grepper'
 Plug 'chrisbra/unicode.vim'
-Plug 'blueyed/vim-diminactive'                                     " inactive window indication
-Plug 'tpope/vim-dispatch'                                          " compiler run
+Plug 'blueyed/vim-diminactive'                                    " inactive window indication
+Plug 'tpope/vim-dispatch'                                         " compiler run
 Plug 'radenling/vim-dispatch-neovim'
-Plug 'tpope/vim-unimpaired'                                        " lots of key shortcuts
-Plug 'janko/vim-test'                                              " tests
+Plug 'tpope/vim-unimpaired'                                       " lots of key shortcuts
+Plug 'janko/vim-test'                                             " tests
 Plug 'craigdallimore/vim-jest-cli', { 'for': 'javascript' }
-Plug 'chaoren/vim-wordmotion'                                      " navigate inside camelCase, kebab-case, etc
-Plug 'elentok/plaintasks.vim'                                      " todo list: + adds task, = marks it complete
-Plug 'freitass/todo.txt-vim'                                       " todo.txt format tasks
-Plug 'godlygeek/tabular'
+Plug 'chaoren/vim-wordmotion'                                     " navigate inside camelCase, kebab-case, etc
+Plug 'elentok/plaintasks.vim'                                     " todo list: + adds task, = marks it complete
+Plug 'freitass/todo.txt-vim'                                      " todo.txt format tasks
+Plug 'godlygeek/tabular'                                          " auto-align columns
 Plug 'plasticboy/vim-markdown'
-Plug 'easymotion/vim-easymotion'                                   " 'f' for quick navigation (cross-window)
-Plug 'tmux-plugins/vim-tmux-focus-events'                          " essential for tmux
+Plug 'easymotion/vim-easymotion'                                  " 'f' for quick navigation (cross-window)
+Plug 'tmux-plugins/vim-tmux-focus-events'                         " essential for tmux
 Plug 'tmux-plugins/vim-tmux'
-Plug 'jacquesbh/vim-showmarks'                                     " show marks command
-Plug 'mox-mox/vim-localsearch'                                     " search per window mode
+Plug 'jacquesbh/vim-showmarks'                                    " show marks command
+Plug 'mox-mox/vim-localsearch'                                    " search per window mode
 Plug 'jrudess/vim-foldtext'
-Plug 'francoiscabrol/ranger.vim'                                   " file manager
+Plug 'francoiscabrol/ranger.vim'                                  " file manager
 Plug 'rbgrouleff/bclose.vim'
-Plug 'bogado/file-line'                                            " `vim file:line` opens the file with caret on the line
-Plug 'vim-scripts/BufOnly.vim'                                     " kill all buffers except current one
-Plug 'takac/vim-hardtime'                                          " navigation habits
-Plug 'vim-scripts/Rename2'                                         " rename current file
-Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }  " nvim for firefox
+Plug 'bogado/file-line'                                           " `vim file:line` opens the file with caret on the line
+Plug 'vim-scripts/BufOnly.vim'                                    " kill all buffers except current one
+Plug 'vim-scripts/Rename2'                                        " rename current file
+Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } } " nvim for firefox
+Plug 'vim-scripts/AnsiEsc.vim'                                    " color sequesnces in terminal
+Plug 'honza/vim-snippets'                                         " snippet libs
+Plug 'sirver/ultisnips'
+Plug 'isruslan/vim-es6'
+Plug 'junegunn/goyo.vim'                                          " presentation mode
 call plug#end()
 " }}}
 
@@ -76,6 +84,7 @@ set nowritebackup
 set guifont=Fira\ Code:h13
 set linespace=5
 set encoding=UTF-8
+set fileencoding=UTF-8
 set ic
 set diffopt+=vertical                             " diff open vertically
 set laststatus=2
@@ -93,6 +102,7 @@ syntax enable
 set ignorecase
 set smartcase
 set inccommand=nosplit
+set conceallevel=1
 " }}}
 
 " folding and editing mappings {{{
@@ -124,6 +134,7 @@ let g:airline_section_y=''
 let g:airline_inactive_collapse=1
 let g:airline_skip_empty_sections = 1
 let g:airline_powerline_fonts = 1
+" powerline symbols
 let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
 let g:airline_right_sep = ''
@@ -241,8 +252,6 @@ if !exists('g:started_by_firenvim')
 " autocommands {{{
   augroup auto_commands
     autocmd!
-    autocmd InsertEnter * set norelativenumber
-    autocmd InsertLeave * set relativenumber
     autocmd BufWritePre /tmp/* setlocal noundofile
     " auto-close preview window
     autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
@@ -286,7 +295,7 @@ if !exists('g:started_by_firenvim')
 
 " macros {{{
   " append date
-  let @d = ':s/$/\=strftime(''%b %d, %Y'')_�kb/'
+  let @d = ':s/$/\=strftime(''%b %d, %Y'')_kb/'
 " }}}
 
 " commands {{{
@@ -340,129 +349,43 @@ if !exists('g:started_by_firenvim')
   let g:gitgutter_diff_args = '-w'
 " }}}
 
-" coc.nvim plugin settings {{{
-  let g:coc_global_extensions = ['coc-tsserver', 'coc-emmet', 'coc-css', 'coc-html', 'coc-json', 'coc-eslint', 'coc-snippets', 'coc-tslint', 'coc-stylelint', 'coc-cssmodules', 'coc-marketplace']
+" fugitive mappings {{{
+  nnoremap dgh :diffget //2<CR>
+  nnoremap dgl :diffget //3<CR>
+" }}}
 
+" deoplete {{{
+   let g:deoplete#enable_at_startup = 1
+" }}}
 
-  " Use tab for trigger completion with characters ahead and navigate.
-  inoremap <silent><expr> <TAB>
-        \ pumvisible() ? "\<C-n>" :
-        \ <SID>check_back_space() ? "\<TAB>" :
-        \ coc#refresh()
-  inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+" ALE {{{
+  nmap <silent> ]w :ALENext<cr>
+  nmap <silent> [w :ALEPrevious<cr>
+  nnoremap <c-space> :ALEHover<CR>
+  nnoremap <silent> gr :ALEFindReferences<CR>
+  nnoremap <leader>rn :ALERename<CR>
+  nnoremap <leader>qf :ALECodeAction<CR>
+  vnoremap <leader>qf :ALECodeAction<CR>
+  autocmd FileType javascript map <buffer> gd :ALEGoToDefinition<CR>
+  autocmd FileType typescript map <buffer> gd :ALEGoToDefinition<CR>
+  autocmd FileType typescriptreact map <buffer> gd :ALEGoToDefinition<CR>
 
-  function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-  endfunction
-
-  " Use <c-x> to trigger completion.
-  inoremap <silent><expr> <c-x> coc#refresh()
-
-  " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current
-  " position. Coc only does snippet and additional edit on confirm.
-  " <cr> could be remapped by other vim plugin, try `:verbose imap <CR>`.
-  if exists('*complete_info')
-    inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
-  else
-    inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-  endif
-
-  " Use `[w` and `]w` to navigate diagnostics
-  nmap <silent> [w <Plug>(coc-diagnostic-prev)
-  nmap <silent> ]w <Plug>(coc-diagnostic-next)
-
-  " GoTo code navigation.
-  nmap <silent> gd <Plug>(coc-definition)
-  nmap <silent> gy <Plug>(coc-type-definition)
-  nmap <silent> gi <Plug>(coc-implementation)
-  nmap <silent> gr <Plug>(coc-references)
-
-  " Use K to show documentation in preview window.
-  nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-  function! s:show_documentation()
-    if (index(['vim','help'], &filetype) >= 0)
-      execute 'h '.expand('<cword>')
-    else
-      call CocAction('doHover')
-    endif
-  endfunction
-
-  " Symbol renaming.
-  nmap <leader>rn <Plug>(coc-rename)
-
-  " Formatting selected code.
-  xmap <leader>f  <Plug>(coc-format-selected)
-  nmap <leader>f  <Plug>(coc-format-selected)
-
-  augroup mygroup
-    autocmd!
-    " Highlight the symbol and its references when holding the cursor.
-    autocmd CursorHold * silent call CocActionAsync('highlight')
-    " Setup formatexpr specified filetype(s).
-    autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-    " Update signature help on jump placeholder.
-    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-  augroup end
-
-  " Applying codeAction to the selected region.
-  " Example: `<leader>aap` for current paragraph
-  xmap <leader>a  <Plug>(coc-codeaction-selected)
-  nmap <leader>a  <Plug>(coc-codeaction-selected)
-
-  " Remap keys for applying codeAction to the current line.
-  nmap <leader>ac  <Plug>(coc-codeaction)
-  " Apply AutoFix to problem on the current line.
-  nmap <leader>qf  <Plug>(coc-fix-current)
-
-  " Map function and class text objects
-  " NOTE: Requires 'textDocument.documentSymbol' support from the language server.
-  xmap if <Plug>(coc-funcobj-i)
-  omap if <Plug>(coc-funcobj-i)
-  xmap af <Plug>(coc-funcobj-a)
-  omap af <Plug>(coc-funcobj-a)
-  xmap ic <Plug>(coc-classobj-i)
-  omap ic <Plug>(coc-classobj-i)
-  xmap ac <Plug>(coc-classobj-a)
-  omap ac <Plug>(coc-classobj-a)
-
-  " Use CTRL-S for selections ranges.
-  " Requires 'textDocument/selectionRange' support of LS, ex: coc-tsserver
-  nmap <silent> <C-s> <Plug>(coc-range-select)
-  xmap <silent> <C-s> <Plug>(coc-range-select)
-
-  " Add `:Format` command to format current buffer.
-  command! -nargs=0 Format :call CocAction('format')
-
-  " Add `:Fold` command to fold current buffer.
-  command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
-  " Add `:OR` command for organize imports of the current buffer.
-  command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
-
-  " Add (Neo)Vim's native statusline support.
-  " NOTE: Please see `:h coc-status` for integrations with external plugins that
-  " provide custom statusline: lightline.vim, vim-airline.
-  " set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
-  " Mappings using CoCList:
-  " Show all diagnostics.
-  nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
-  " Manage extensions.
-  nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
-  " Show commands.
-  nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
-  " Find symbol of current document.
-  nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
-  " Search workspace symbols.
-  nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
-  " Do default action for next item.
-  nnoremap <silent> <space>j  :<C-u>CocNext<CR>
-  " Do default action for previous item.
-  nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
-  " Resume latest coc list.
-  nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+  let js_fixers = ['prettier', 'eslint']
+  let g:ale_fix_on_save = 1
+  let g:ale_fixers = {
+  \   '*': ['remove_trailing_lines', 'trim_whitespace'],
+  \   'javascript': js_fixers,
+  \   'javascript.jsx': js_fixers,
+  \   'typescript': js_fixers,
+  \   'typescriptreact': js_fixers,
+  \   'css': ['prettier'],
+  \   'json': ['prettier'],
+  \}
+  let g:ale_sign_error = "🐛"
+  let g:ale_sign_warning = "⚠️"
+  let g:ale_sign_info = "ℹ"
+  let g:ale_virtualtext_cursor = 1
+  let g:ale_virtualtext_prefix = "🔥 "
 " }}}
 
 " prettier {{{
@@ -479,16 +402,23 @@ if !exists('g:started_by_firenvim')
   nnoremap <silent> <leader>b :BufOnly<cr>
 " }}}
 
-" hardtime settings {{{
-  let g:hardtime_default_on = 1
-  let g:list_of_normal_keys = ["h", "j", "k", "l"]
-" }}}
-
 " ranger settings {{{
   let g:ranger_map_keys = 0
   noremap <silent> <leader>o :Ranger<CR>
   let g:ranger_replace_netrw = 1
   let g:ranger_command_override = 'ranger --cmd "set show_hidden=true"'
+" }}}
+
+" Mappings to make Vim more friendly towards presenting slides {{{
+  autocmd BufNewFile,BufRead *.vpm call SetVimPresentationMode()
+  function SetVimPresentationMode()
+    nnoremap <buffer> <Right> :n<CR>
+    nnoremap <buffer> <Left> :N<CR>
+
+    if !exists('#goyo')
+      Goyo
+    endif
+  endfunction
 " }}}
 
 " local settings - keep this last {{{
