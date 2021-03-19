@@ -57,6 +57,8 @@ Plug 'honza/vim-snippets'                                         " snippet libs
 Plug 'sirver/ultisnips'
 Plug 'isruslan/vim-es6'
 Plug 'junegunn/goyo.vim'                                          " presentation mode
+Plug 'junegunn/limelight.vim'
+Plug 'instant-markdown/vim-instant-markdown', {'for': 'markdown'}
 call plug#end()
 " }}}
 
@@ -77,14 +79,15 @@ set incsearch
 set autoindent
 set smartindent
 set showcmd                                       " command line visible
-set backupdir=$TEMP//
-set directory=$TEMP//
+set backupdir=$HOME/.local/share/nvim/backup//
+set directory=$HOME/.local/share/nvim/swap//
+set undodir=$HOME/.local/share/nvim/undo//
+set undofile
 set nobackup
 set nowritebackup
 set guifont=Fira\ Code:h13
 set linespace=5
 set encoding=UTF-8
-set fileencoding=UTF-8
 set ic
 set diffopt+=vertical                             " diff open vertically
 set laststatus=2
@@ -101,26 +104,15 @@ colorscheme solarized8_high " theme
 syntax enable
 set ignorecase
 set smartcase
-set inccommand=nosplit
+set inccommand=nosplit                            " search/replace preview
 set conceallevel=1
 " }}}
 
 " folding and editing mappings {{{
-" wrapping mappings based on surround plugin
-nmap <space>' ysiw"
-nmap <leader>' ysiw'
-nmap <space>[ ysiw]
-nmap <space>] ysiw]
-nmap <space>9 ysiw)
-nmap <space>1 ysiw)
-nmap <leader>[ ysiw}
-nmap <leader>] ysiw}
-nmap <space>` ysiw`
-nmap <space>. ysiw>
-nmap <space>, ysiw>
 " editing
 nnoremap D kdd
 nnoremap C kcc
+" folding
 nnoremap + zo
 nnoremap - zc
 " }}}
@@ -167,7 +159,7 @@ let g:airline_right_alt_sep = ''
 
 " markdown settings {{{
   let g:vim_markdown_folding_disabled = 1
-  set conceallevel=2
+  " set conceallevel=2
   let g:vim_markdown_conceal = 0
 " }}}
 
@@ -180,6 +172,7 @@ if !exists('g:started_by_firenvim')
 
 " standalone editor mappings {{{
   noremap gF :vertical wincmd f<CR> " file commands
+  inoremap jj <ESC>
 " }}}
 
 " FZF plugin settings {{{
@@ -200,6 +193,9 @@ if !exists('g:started_by_firenvim')
   nnoremap <F2> :FZF<CR>
   nnoremap ,e :call fzf#vim#gitfiles('', fzf#vim#with_preview('right'))<CR>
   nnoremap ,b :Buffers<CR>
+  nnoremap ,f :Files<CR>
+  nnoremap ,l :BLines<CR>
+  nnoremap ,w :Windows<CR>
  " }}}
 
 " Dynamic theme and platofrm dependent stuff {{{
@@ -210,7 +206,7 @@ if !exists('g:started_by_firenvim')
   " colors
   let g:diminactive_use_syntax = 1
   let g:diminactive_enable_focus = 1
-  let g:diminactive_use_colorcolumn = 0
+  let g:diminactive_use_colorcolumn = 1
 
   function! SetColorScheme()
     " requires macos, works in catalina -- use env var instead
@@ -261,6 +257,7 @@ if !exists('g:started_by_firenvim')
     " auto save session on exit
     autocmd VimLeave * call SaveCurrentSession()
     autocmd FileType vim setlocal foldmethod=marker
+    autocmd FileType vim setlocal fileencoding=UTF-8
     autocmd BufWritePre *todo.txt :normal \s+
     autocmd BufWritePre *.js,*.jsx,*.json,*.ts,*.tsx Prettier
   augroup END
@@ -291,6 +288,15 @@ if !exists('g:started_by_firenvim')
           \ .' ((getcmdtype() is# ":" && getcmdline() is# "'.a:input.'")'
           \ .'? ("'.a:output.'") : ("'.a:input.'"))'
   endfunction
+
+  function! QuickfixFilenames()
+    " Building a hash ensures we get each buffer only once
+    let buffer_numbers = {}
+    for quickfix_item in getqflist()
+      let buffer_numbers[quickfix_item['bufnr']] = bufname(quickfix_item['bufnr'])
+    endfor
+    return join(values(buffer_numbers))
+  endfunction
 " }}}
 
 " macros {{{
@@ -299,6 +305,7 @@ if !exists('g:started_by_firenvim')
 " }}}
 
 " commands {{{
+  command! -nargs=0 -bar Qargs execute 'args ' . QuickfixFilenames()
   command! -register CopyMatches call CopyMatches(<q-reg>)
   command! -nargs=1 Ren execute "!mv %:p %:p:h/<args>" <bar> execute "e <args>"
   command! VTerm :silent :vsplit | :terminal
@@ -455,3 +462,4 @@ else
   let fc['https?://.*mail\.google\.com'] = { 'takeover': 'never', 'priority': 1 }
 " }}}
 endif
+
