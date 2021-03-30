@@ -99,8 +99,7 @@ set hidden                                        " coc.nvim alignments
 set signcolumn=yes
 set cmdheight=2
 set updatetime=300
-let g:solarized_termcolors=16
-colorscheme solarized8_high " theme
+let g:solarized_termcolors=256
 syntax enable
 set ignorecase
 set smartcase
@@ -208,19 +207,19 @@ if !exists('g:started_by_firenvim')
   let g:diminactive_enable_focus = 1
   let g:diminactive_use_colorcolumn = 1
 
+  colorscheme solarized8_flat
+
   function! SetColorScheme()
-    " requires macos, works in catalina -- use env var instead
-    let @z = system("defaults read -g AppleInterfaceStyle | grep Dark")
-    if matchstr(@z, 'Dark') == 'Dark'
+    " relies on COLOR_SCHEME var set by zsh
+    let scheme = system("cat $HOME/.config/current_theme")
+    if matchstr(scheme, 'dark') == 'dark'
       set background=dark
     else
       set background=light
     endif
   endfunction
 
-  if (executable('defaults'))
-    call SetColorScheme()
-  endif
+  call SetColorScheme()
 " }}}
 
 " dotfile and todo access mappings {{{
@@ -368,7 +367,7 @@ if !exists('g:started_by_firenvim')
 " ALE {{{
   nmap <silent> ]w :ALENext<cr>
   nmap <silent> [w :ALEPrevious<cr>
-  nnoremap <c-space> :ALEHover<CR>
+  nnoremap <leader>h :ALEHover<CR>
   nnoremap <silent> gr :ALEFindReferences<CR>
   nnoremap <leader>rn :ALERename<CR>
   nnoremap <leader>qf :ALECodeAction<CR>
@@ -405,6 +404,13 @@ if !exists('g:started_by_firenvim')
   nmap <leader>/ <Plug>localsearch_toggle
 " }}}
 
+" Asterisk search override {{{
+  nnoremap <silent>  * :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=1<CR>n
+  nnoremap <silent>  # :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=0<CR>n
+  nnoremap <silent> g* :let @/='\C'   . expand('<cword>')       <CR>:let v:searchforward=1<CR>n
+  nnoremap <silent> g# :let @/='\C'   . expand('<cword>')       <CR>:let v:searchforward=0<CR>n
+" }}}
+
 " BufOnly mappings {{{
   nnoremap <silent> <leader>b :BufOnly<cr>
 " }}}
@@ -426,6 +432,11 @@ if !exists('g:started_by_firenvim')
       Goyo
     endif
   endfunction
+" }}}
+
+" Abbreviations {{{
+  abbrev cosnt const
+  abbrev hrlp help
 " }}}
 
 " local settings - keep this last {{{
@@ -462,4 +473,3 @@ else
   let fc['https?://.*mail\.google\.com'] = { 'takeover': 'never', 'priority': 1 }
 " }}}
 endif
-
