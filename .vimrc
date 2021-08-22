@@ -1,17 +1,23 @@
 " Plugins {{{
 call plug#begin('~/.local/share/nvim/plugged')
-Plug 'lifepillar/vim-solarized8'                                  " theme
-Plug 'nvim-lua/popup.nvim'                                        " lua
+Plug 'nvim-lua/popup.nvim'                                        " lua infra
 Plug 'nvim-lua/plenary.nvim'
+Plug 'tami5/sql.nvim'
 Plug 'lewis6991/gitsigns.nvim'                                    " git essentials
 Plug 'tpope/vim-fugitive'
-Plug 'codeindulgence/vim-tig'
+Plug 'iberianpig/tig-explorer.vim'
+Plug 'rbgrouleff/bclose.vim'
 Plug 'tpope/vim-rhubarb'
+Plug 'ygm2/rooter.nvim'                                           " autochdir to git repo root
 Plug 'hoob3rt/lualine.nvim'                                       " status
+Plug 'kyazdani42/nvim-web-devicons'
 Plug 'nvim-telescope/telescope.nvim'                              " fuzzy search
+Plug 'nvim-telescope/telescope-frecency.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'sudormrfbin/cheatsheet.nvim'
 Plug 'tpope/vim-commentary'                                       " comment on gc
-Plug 'tpope/vim-surround'                                         " surround with brakets, tags, etc
-Plug 'jiangmiao/auto-pairs'                                       " parens autocomplete
+Plug 'tpope/vim-surround'                                         " brakets, quotes, etc
+Plug 'raimondi/delimitmate'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                   " dev essentials
 Plug 'wakatime/vim-wakatime'
 Plug 'tpope/vim-abolish'                                          " substitution
@@ -24,6 +30,7 @@ Plug 'phaazon/hop.nvim'                                           " 'f' for quic
 Plug 'tmux-plugins/vim-tmux-focus-events'                         " essential for tmux
 Plug 'tmux-plugins/vim-tmux'
 Plug 'jrudess/vim-foldtext'                                       " fold options
+Plug 'karb94/neoscroll.nvim'
 Plug 'bogado/file-line'                                           " `vim file:line` opens the file with caret on the line
 Plug 'vim-scripts/BufOnly.vim'                                    " kill all buffers except current one
 Plug 'vim-scripts/Rename2'                                        " rename current file and open it
@@ -33,8 +40,19 @@ Plug 'sirver/ultisnips'
 Plug 'instant-markdown/vim-instant-markdown', {'for': 'markdown'} " md support
 Plug 'plasticboy/vim-markdown'
 Plug 'kjwon15/vim-transparent'                                    " remove background color
-Plug 'PeterRincker/vim-argumentative'                             " manipulating and moving between function arguments
 Plug 'neoclide/jsonc.vim'                                         " jsonc
+Plug 'uarun/vim-protobuf'                                         " protobuf
+
+if(!has('nvim-0.6'))
+  Plug 'PeterRincker/vim-argumentative'                           " manipulating and moving between function arguments
+  Plug 'lifepillar/vim-solarized8'                                " theme
+endif
+if (has('nvim-0.6'))                                              " experimental stuff
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}     " AST parser
+  Plug 'mizlan/iswap.nvim'                                        " args swapper
+  Plug 'ishan9299/nvim-solarized-lua'                             " theme
+  Plug 'p00f/nvim-ts-rainbow'                                     " parens
+endif
 call plug#end()
 " }}}
 
@@ -96,14 +114,21 @@ let g:EasyClipUseSubstituteDefaults=1
 " }}}
 
 " hop {{{
-nmap f :HopChar2<CR>
-nmap <silent> ,l :HopLine<CR>
-nmap <silent> ,. :HopWord<CR>
+nmap f <cmd>HopChar2<CR>
+onoremap <silent> ,l <cmd>HopLine<CR>
+onoremap <silent> ,. <cmd>HopWord<CR>
+vnoremap <silent> ,l <cmd>HopLine<CR>
+vnoremap <silent> ,. <cmd>HopWord<CR>
+nnoremap <silent> ,l <cmd>HopLine<CR>
+nnoremap <silent> ,. <cmd>HopWord<CR>
 lua require'hop'.setup{ tease = true }
 " }}}
 
-" auto-pairs {{{
-let g:AutoPairsFlyMode = 0
+" delimitmate {{{
+let g:delimitMate_expand_cr = 2
+let g:delimitMate_expand_space = 1
+let g:delimitMate_expand_inside_quotes = 1
+let g:delimitMate_balance_matchpairs = 1
 " }}}
 
 " markdown settings {{{
@@ -122,16 +147,28 @@ noremap <leader>= <C-a>
 noremap <leader>- <C-x>
 noremap gF :vertical wincmd f<CR> " file commands
 let mapleader = "`"
+nnoremap <Tab> <C-w><C-w>
+nnoremap <S-Tab> gt
 " }}}
 
 " telescope {{{
 lua << EOF
-require('telescope').setup()
+require('telescope').setup{
+  extensions = {
+    fzf = {
+      fuzzy = true,                    -- false will only do exact matching
+      override_generic_sorter = false, -- override the generic sorter
+      override_file_sorter = true,     -- override the file sorter
+    }
+  }
+}
+require"telescope".load_extension("frecency")
+require"telescope".load_extension("fzf")
 EOF
 nnoremap <leader>f <cmd>Telescope find_files<cr>
 nnoremap <leader>g <cmd>Telescope live_grep<cr>
 nnoremap <leader>b <cmd>Telescope buffers<cr>
-nnoremap <leader>e <cmd>Telescope git_files<cr>
+nnoremap <Leader>e :lua require'telescope'.extensions.frecency.frecency()<cr>
 nnoremap <Leader>* :lua require'telescope.builtin'.grep_string{}<cr>
 " }}}
 
@@ -166,26 +203,19 @@ augroup auto_commands
   autocmd VimLeave * call SaveCurrentSession()
   autocmd FileType vim setlocal foldmethod=marker
   autocmd FileType vim setlocal fileencoding=UTF-8
-  autocmd BufWritePre *todo.txt :normal \s+
+  autocmd BufEnter .vimrc setlocal foldmethod=marker
+  au TextYankPost * lua vim.highlight.on_yank {higroup="IncSearch", timeout=300, on_visual=true}
 augroup END
 " }}}
 
 " macros {{{
 let @c = "vi):s/, /) => (/\<CR>"                                  " curry
-let @t = "yawi(\<right>\<BS>\<Esc>ea: \<Esc>pi)\<Esc>bvU\<Esc>"   " type
+let @t = "yawi(\<right>\<Esc>ea: \<Esc>pi)\<Esc>bvU\<Esc>"   " type
 let @r = "ysi}}ireturn \<Esc>ds):w\<CR>"                          " return object literal
 " }}}
 
 " functions {{{
 "
-function! CurryTsArgs()
-  let searchReg = @/
-  execute "vi):s/, /) => (/\<CR>"
-  let @/ = searchReg
-endfunction
-
-nnoremap <leader>c :call CurryTsArgs()
-
 function! CopyMatches(reg)
   let hits = []
   %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
@@ -222,17 +252,20 @@ command! -nargs=1 Ren execute "!mv %:p %:p:h/<args>" <bar> execute "e <args>"
 command! VTerm :silent :vsplit | :terminal
 command! STerm :silent :split | :terminal
 command! TTerm :silent :tabe | :terminal
-
 " command abbreviations
-call SetupCommandAlias("??", "GrepperRg")
 call SetupCommandAlias("W", "w")
 call SetupCommandAlias("Wq", "wq")
 call SetupCommandAlias("Q", "q")
 call SetupCommandAlias("Qa", "qa")
-call SetupCommandAlias("H", "Tig!")
 call SetupCommandAlias("vterm", "VTerm")
 call SetupCommandAlias("tterm", "TTerm")
 call SetupCommandAlias("sterm", "STerm")
+call SetupCommandAlias("gco", "Git checkout")
+call SetupCommandAlias("gcb", "Git checkout -b")
+call SetupCommandAlias("gcm", "Git checkout master")
+call SetupCommandAlias("gup", "Git pull --rebase")
+call SetupCommandAlias("gp", "Git push")
+call SetupCommandAlias("gpsup", ":Git -c push.default=current push")
 " }}}
 
 " terminal settings {{{
@@ -249,9 +282,7 @@ endif
 " }}}
 
 " gitsigns {{{
-lua << EOF
-require('gitsigns').setup({ current_line_blame = false })
-EOF
+lua require('gitsigns').setup({ current_line_blame = true })
 " }}}
 
 " fugitive mappings {{{
@@ -261,8 +292,16 @@ nnoremap gbr :GBrowse<CR>
 vnoremap gbr :GBrowse<CR>
 " }}}
 
+" tig-explorer {{{
+nnoremap <Leader>T :TigOpenCurrentFile<CR>
+nnoremap <Leader>t :TigOpenProjectRootDir<CR>
+" }}}
+
 " coc {{{
 let g:coc_global_extensions = ['coc-prettier', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-marketplace', 'coc-vimlsp']
+
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+
 " Use `[w` and `]w` to navigate diagnostics
 nmap <silent> [w <Plug>(coc-diagnostic-prev)
 nmap <silent> ]w <Plug>(coc-diagnostic-next)
@@ -271,6 +310,9 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+nmap <silent> <leader>p <cmd>Prettier<CR>
+nmap <silent> <leader>q <cmd>CocAction<CR>
+nmap <silent> <F3> <cmd>CocRestart<CR>
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
@@ -285,17 +327,24 @@ endfunction
 nmap <leader>rn <Plug>(coc-rename)
 " }}}
 
-" Dynamic theme and platofrm dependent stuff {{{
+" Dynamic theme {{{
 if (has("termguicolors"))
   set termguicolors
 endif
-
 " colors
 let g:diminactive_use_syntax = 1
 let g:diminactive_enable_focus = 1
 let g:diminactive_use_colorcolumn = 0
 
-colorscheme solarized8_flat
+if(!has('nvim-0.6'))
+  colorscheme solarized8_flat
+else
+  colorscheme solarized-flat
+  let g:solarized_italics = 1
+  let g:solarized_diffmode = 'normal'
+  let g:solarized_visibility = 'normal'
+  let g:solarized_statusline = 'normal'
+endif
 
 function! SetColorScheme()
   " relies on COLOR_SCHEME var set by zsh
@@ -303,25 +352,28 @@ function! SetColorScheme()
   if matchstr(scheme, 'dark') == 'dark'
     set background=dark
     lua require("plenary.reload").reload_module("lualine", true)
-    lua require'lualine'.setup{ options = { icons_enabled = false, theme = 'solarized_dark' }, sections = { lualine_b = {'branch', 'b:gitsigns_status', 'g:coc_status'}, lualine_c = {{ 'filename', path = 1 }}, lualine_x = {'encoding', 'filetype'}, lualine_y = {{'diagnostics', sources = {'coc'}}} } }
-
+    lua require'lualine'.setup{ options = { theme = 'solarized_dark' }, sections = { lualine_b = {'branch', 'b:gitsigns_status', 'g:coc_status'}, lualine_c = {{ 'filename', path = 1 }}, lualine_x = {'encoding', 'filetype'}, lualine_y = {{'diagnostics', sources = {'coc'}, color_error='#ff0000', color_warn='#ffff00', color_info = '#0000ff', color_hint = '#00ff00' } } }, extensions={'fugitive'} }
   else
     set background=light
     lua require("plenary.reload").reload_module("lualine", true)
-    lua require'lualine'.setup{ options = { icons_enabled = false, theme = 'solarized_light'}, sections = { lualine_b = {'branch', 'b:gitsigns_status', 'g:coc_status'}, lualine_c = {{ 'filename', path = 1 }}, lualine_x = {'encoding', 'filetype'}, lualine_y = {{'diagnostics', sources = {'coc'}}} } }
+    lua require'lualine'.setup{ options = { theme = 'solarized_light' }, sections = { lualine_b = {'branch', 'b:gitsigns_status', 'g:coc_status'}, lualine_c = {{ 'filename', path = 1 }}, lualine_x = {'encoding', 'filetype'}, lualine_y = {{'diagnostics', sources = {'coc'}, color_error='#ff0000', color_warn='#ffff00', color_info = '#0000ff', color_hint = '#00ff00' } } }, extensions={'fugitive', 'quickfix'} }
   endif
 endfunction
 
 call SetColorScheme()
 " }}}
 
+" devicons {{{
+lua require'nvim-web-devicons'.setup{}
+" }}}
+
 " ultisnips {{{
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsEditSplit="vertical"
-nmap <silent> <F2> :UltiSnipsEdit<CR>
+nmap <silent> <F2> <cmd>UltiSnipsEdit<CR>
 " }}}
 
-" Asterisk search override {{{
+" Case sensitive asterisk search {{{
 nnoremap <silent>  * :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=1<CR>n
 nnoremap <silent>  # :let @/='\C\<' . expand('<cword>') . '\>'<CR>:let v:searchforward=0<CR>n
 nnoremap <silent> g* :let @/='\C'   . expand('<cword>')       <CR>:let v:searchforward=1<CR>n
@@ -329,11 +381,36 @@ nnoremap <silent> g# :let @/='\C'   . expand('<cword>')       <CR>:let v:searchf
 " }}}
 
 " BufOnly mappings {{{
-nnoremap <silent> <C-w>b :BufOnly<cr>
+nnoremap <silent> <C-w>b <cmd>BufOnly<cr>
+" }}}
+
+" neoscroll {{{
+lua require('neoscroll').setup()
+" }}}
+
+" iswap {{{
+if(has('nvim-0.6'))
+  nnoremap <silent> ,, <cmd>ISwap<CR>
+  nnoremap <silent> << <cmd>ISwapWith<CR>
+endif
+" }}}
+
+" rainbow {{{
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+  rainbow = {
+    enable = true,
+    extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+    max_file_lines = nil, -- Do not enable for files with more than n lines, int
+    colors = {}, -- table of hex strings
+    termcolors = {} -- table of colour name strings
+  }
+}
+EOF
 " }}}
 
 " Abbreviations {{{
-abbrev cosnt const
+ab cosnt const
 abbrev hrlp help
 " }}}
 
