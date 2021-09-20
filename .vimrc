@@ -5,7 +5,6 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'tami5/sql.nvim'
 Plug 'lewis6991/gitsigns.nvim'                                    " git essentials
 Plug 'tpope/vim-fugitive'
-Plug 'iberianpig/tig-explorer.vim'
 Plug 'rbgrouleff/bclose.vim'
 Plug 'tpope/vim-rhubarb'
 Plug 'ygm2/rooter.nvim'                                           " autochdir to git repo root
@@ -14,35 +13,36 @@ Plug 'kyazdani42/nvim-web-devicons'
 Plug 'nvim-telescope/telescope.nvim'                              " fuzzy search
 Plug 'nvim-telescope/telescope-frecency.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
-Plug 'sudormrfbin/cheatsheet.nvim'
+Plug 'sudormrfbin/cheatsheet.nvim'                                " command hints in telescope
 Plug 'tpope/vim-commentary'                                       " comment on gc
-Plug 'tpope/vim-surround'                                         " brakets, quotes, etc
-Plug 'raimondi/delimitmate'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}                   " dev essentials
+Plug 'tpope/vim-surround'                                         " brackets, quotes, etc
+Plug 'raimondi/delimitmate'                                       " parens + auto expansion on space, new line
+" Plug 'neoclide/coc.nvim', {'branch': 'release'}                   " dev essentials
+Plug 'neovim/nvim-lspconfig'
+Plug 'jose-elias-alvarez/null-ls.nvim'
+Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 Plug 'wakatime/vim-wakatime'
 Plug 'tpope/vim-abolish'                                          " substitution
 Plug 'svermeulen/vim-easyclip'                                    " yank to clipboard, 'd' for delete, 'm' for cut, 's' for substitute
 Plug 'tpope/vim-repeat'                                           " plugins '.' operator
-Plug 'blueyed/vim-diminactive'                                    " inactive window indication
 Plug 'tpope/vim-unimpaired'                                       " lots of key shortcuts
 Plug 'chaoren/vim-wordmotion'                                     " navigate inside camelCase, kebab-case, etc
 Plug 'phaazon/hop.nvim'                                           " 'f' for quick navigation
 Plug 'tmux-plugins/vim-tmux-focus-events'                         " essential for tmux
 Plug 'tmux-plugins/vim-tmux'
+Plug 'christoomey/vim-tmux-navigator'                             " CTRL+HJKL pane navigationn
 Plug 'jrudess/vim-foldtext'                                       " fold options
-Plug 'karb94/neoscroll.nvim'
+Plug 'karb94/neoscroll.nvim'                                      " smooth scroll
 Plug 'bogado/file-line'                                           " `vim file:line` opens the file with caret on the line
 Plug 'vim-scripts/BufOnly.vim'                                    " kill all buffers except current one
-Plug 'vim-scripts/Rename2'                                        " rename current file and open it
-Plug 'vim-scripts/AnsiEsc.vim'                                    " color sequesnces in terminal
+Plug 'vim-scripts/AnsiEsc.vim'                                    " color sequences in terminal
 Plug 'honza/vim-snippets'                                         " snippet libs
 Plug 'sirver/ultisnips'
 Plug 'instant-markdown/vim-instant-markdown', {'for': 'markdown'} " md support
 Plug 'plasticboy/vim-markdown'
-Plug 'kjwon15/vim-transparent'                                    " remove background color
 Plug 'neoclide/jsonc.vim'                                         " jsonc
 Plug 'uarun/vim-protobuf'                                         " protobuf
-
+Plug 'tpope/vim-speeddating'                                      " date inc/dec
 if(!has('nvim-0.6'))
   Plug 'PeterRincker/vim-argumentative'                           " manipulating and moving between function arguments
   Plug 'lifepillar/vim-solarized8'                                " theme
@@ -52,6 +52,9 @@ if (has('nvim-0.6'))                                              " experimental
   Plug 'mizlan/iswap.nvim'                                        " args swapper
   Plug 'ishan9299/nvim-solarized-lua'                             " theme
   Plug 'p00f/nvim-ts-rainbow'                                     " parens
+  Plug 'xiyaowong/nvim-transparent'                               " vim transparent bg
+  Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+  Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 endif
 call plug#end()
 " }}}
@@ -91,7 +94,7 @@ set t_Co=256
 set nofoldenable                                  " folding
 set fdm=syntax
 set foldnestmax=10
-set hidden                                        " coc.nvim alignments
+set hidden
 set signcolumn=yes
 set cmdheight=2
 set updatetime=300
@@ -102,6 +105,10 @@ set smartcase
 set inccommand=nosplit                            " search/replace preview
 set conceallevel=1
 set switchbuf+=usetab,newtab
+" }}}
+
+" coq {{{
+let g:coq_settings = { 'auto_start': 'shut-up' }
 " }}}
 
 " easyclip settings {{{
@@ -131,24 +138,35 @@ let g:delimitMate_expand_inside_quotes = 1
 let g:delimitMate_balance_matchpairs = 1
 " }}}
 
+" speeddating {{{
+nmap <C-S> <Plug>SpeedDatingUp
+nmap <C-X> <Plug>SpeedDatingDown
+nnoremap <Plug>SpeedDatingFallbackUp <C-S>
+nnoremap <Plug>SpeedDatingFallbackDown <C-X>
+" }}}
+
 " markdown settings {{{
 let g:vim_markdown_folding_disabled = 1
 " set conceallevel=2
 let g:vim_markdown_conceal = 0
 " }}}
 
-" editor settings {{{
+" undo settings {{{
 set undodir=$HOME/.local/share/nvim/undo
 set undofile
 " }}}
 
-" editor mappings {{{
-noremap <leader>= <C-a>
-noremap <leader>- <C-x>
-noremap gF :vertical wincmd f<CR> " file commands
+" basic mappings {{{
 let mapleader = "`"
+" nnoremap <leader>= <C-a>
+" nnoremap <leader>- <C-x>
+noremap gF :vertical wincmd f<CR> " file commands
 nnoremap <Tab> <C-w><C-w>
-nnoremap <S-Tab> gt
+nnoremap <S-Tab> <C-w><C-p>
+nnoremap <M-Tab> gt
+nnoremap Q <cmd>q<CR>
+nnoremap <leader>d "=strftime("%b %d, %Y")<CR>P
+
 " }}}
 
 " telescope {{{
@@ -170,10 +188,12 @@ nnoremap <leader>g <cmd>Telescope live_grep<cr>
 nnoremap <leader>b <cmd>Telescope buffers<cr>
 nnoremap <Leader>e :lua require'telescope'.extensions.frecency.frecency()<cr>
 nnoremap <Leader>* :lua require'telescope.builtin'.grep_string{}<cr>
+
 " }}}
 
 " dotfile and todo access mappings {{{
 nnoremap <silent> <leader>cv :vsplit ~/.vimrc <bar> :lcd ~/vim_config<cr>
+nnoremap <silent> <F1> :vsplit ~/.vimrc <bar> :lcd ~/vim_config<cr>
 nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
 nnoremap <silent> <F5> :source $MYVIMRC<cr>
 nnoremap <silent> <leader>tt :tabe ~/.tmux.conf<cr>
@@ -204,7 +224,9 @@ augroup auto_commands
   autocmd FileType vim setlocal foldmethod=marker
   autocmd FileType vim setlocal fileencoding=UTF-8
   autocmd BufEnter .vimrc setlocal foldmethod=marker
-  au TextYankPost * lua vim.highlight.on_yank {higroup="IncSearch", timeout=300, on_visual=true}
+  autocmd TextYankPost * lua vim.highlight.on_yank {higroup="IncSearch", timeout=300, on_visual=true}
+  autocmd BufLeave * set nocursorcolumn | set nocursorline | set colorcolumn=0
+  autocmd BufEnter * set cursorcolumn | set cursorline | set colorcolumn=120
 augroup END
 " }}}
 
@@ -215,7 +237,6 @@ let @r = "ysi}}ireturn \<Esc>ds):w\<CR>"                          " return objec
 " }}}
 
 " functions {{{
-"
 function! CopyMatches(reg)
   let hits = []
   %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
@@ -248,7 +269,6 @@ endfunction
 " commands {{{
 command! -nargs=0 -bar Qargs execute 'args ' . QuickfixFilenames()
 command! -register CopyMatches call CopyMatches(<q-reg>)
-command! -nargs=1 Ren execute "!mv %:p %:p:h/<args>" <bar> execute "e <args>"
 command! VTerm :silent :vsplit | :terminal
 command! STerm :silent :split | :terminal
 command! TTerm :silent :tabe | :terminal
@@ -292,39 +312,43 @@ nnoremap gbr :GBrowse<CR>
 vnoremap gbr :GBrowse<CR>
 " }}}
 
-" tig-explorer {{{
-nnoremap <Leader>T :TigOpenCurrentFile<CR>
-nnoremap <Leader>t :TigOpenProjectRootDir<CR>
+" lsp {{{
+lua require("./lsp-config")
 " }}}
 
 " coc {{{
-let g:coc_global_extensions = ['coc-prettier', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-marketplace', 'coc-vimlsp']
+" let g:coc_global_extensions = ['coc-prettier', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-marketplace', 'coc-vimlsp']
 
-command! -nargs=0 Prettier :CocCommand prettier.formatFile
+" command! -nargs=0 Prettier :CocCommand prettier.formatFile
+" command! -nargs=0 Lint :CocCommand eslint.executeAutofix
 
-" Use `[w` and `]w` to navigate diagnostics
-nmap <silent> [w <Plug>(coc-diagnostic-prev)
-nmap <silent> ]w <Plug>(coc-diagnostic-next)
-" GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-nmap <silent> <leader>p <cmd>Prettier<CR>
-nmap <silent> <leader>q <cmd>CocAction<CR>
-nmap <silent> <F3> <cmd>CocRestart<CR>
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+" " Use `[w` and `]w` to navigate diagnostics
+" nmap <silent> [w <Plug>(coc-diagnostic-prev)
+" nmap <silent> ]w <Plug>(coc-diagnostic-next)
+" " GoTo code navigation.
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gy <Plug>(coc-type-definition)
+" nmap <silent> gi <Plug>(coc-implementation)
+" nmap <silent> gr <Plug>(coc-references)
+" nmap <silent> <leader>p <cmd>Prettier<CR> <cmd>Lint<CR>
+" nmap <silent> <leader>q <cmd>CocAction<CR>
+" nmap <silent> <F3> <cmd>CocRestart<CR>
+" " Use K to show documentation in preview window.
+" nnoremap <silent> K :call <SID>show_documentation()<CR>
+" " J for jsdoc
+" nnoremap <silent> J <cmd>CocCommand docthis.documentThis<CR>
+" nnoremap <silent> F <cmd>CocCommand tsserver.organizeImports<CR>
+" nnoremap <silent> <F2> <cmd>CocCommand workspace.renameCurrentFile<CR>
 
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-" Symbol renaming.
-nmap <leader>rn <Plug>(coc-rename)
+" function! s:show_documentation()
+"   if (index(['vim','help'], &filetype) >= 0)
+"     execute 'h '.expand('<cword>')
+"   else
+"     call CocAction('doHover')
+"   endif
+" endfunction
+" " Symbol renaming.
+" nmap <leader>rn <Plug>(coc-rename)
 " }}}
 
 " Dynamic theme {{{
@@ -332,10 +356,6 @@ if (has("termguicolors"))
   set termguicolors
 endif
 " colors
-let g:diminactive_use_syntax = 1
-let g:diminactive_enable_focus = 1
-let g:diminactive_use_colorcolumn = 0
-
 if(!has('nvim-0.6'))
   colorscheme solarized8_flat
 else
@@ -370,7 +390,7 @@ lua require'nvim-web-devicons'.setup{}
 " ultisnips {{{
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsEditSplit="vertical"
-nmap <silent> <F2> <cmd>UltiSnipsEdit<CR>
+nmap <silent> <F4> <cmd>UltiSnipsEdit<CR>
 " }}}
 
 " Case sensitive asterisk search {{{
@@ -388,6 +408,33 @@ nnoremap <silent> <C-w>b <cmd>BufOnly<cr>
 lua require('neoscroll').setup()
 " }}}
 
+" treesitter {{{
+if(has('nvim-0.6'))
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
+lua << EOF
+local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+parser_config.typescript.used_by = "typescriptreact"
+require'nvim-treesitter.configs'.setup {
+  rainbow = {
+    enable = true,
+    extended_mode = true,
+    max_file_lines = 1000
+  },
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "vv",
+      node_incremental = "w",
+      scope_incremental = "ss",
+      node_decremental = "n",
+    },
+  },
+}
+EOF
+endif
+" }}}
+
 " iswap {{{
 if(has('nvim-0.6'))
   nnoremap <silent> ,, <cmd>ISwap<CR>
@@ -395,22 +442,14 @@ if(has('nvim-0.6'))
 endif
 " }}}
 
-" rainbow {{{
-lua << EOF
-require'nvim-treesitter.configs'.setup {
-  rainbow = {
-    enable = true,
-    extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-    max_file_lines = nil, -- Do not enable for files with more than n lines, int
-    colors = {}, -- table of hex strings
-    termcolors = {} -- table of colour name strings
-  }
-}
-EOF
+" transparent {{{
+if(has('nvim-0.6'))
+  lua require("transparent").setup({ enable = true })
+endif
 " }}}
 
 " Abbreviations {{{
-ab cosnt const
+abbrev cosnt const
 abbrev hrlp help
 " }}}
 
