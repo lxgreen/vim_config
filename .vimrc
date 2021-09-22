@@ -7,7 +7,7 @@ Plug 'lewis6991/gitsigns.nvim'                                    " git essentia
 Plug 'tpope/vim-fugitive'
 Plug 'rbgrouleff/bclose.vim'
 Plug 'tpope/vim-rhubarb'
-Plug 'ygm2/rooter.nvim'                                           " autochdir to git repo root
+Plug 'ahmedkhalf/project.nvim'                                    " autochdir to git repo root
 Plug 'hoob3rt/lualine.nvim'                                       " status
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'nvim-telescope/telescope.nvim'                              " fuzzy search
@@ -17,10 +17,11 @@ Plug 'sudormrfbin/cheatsheet.nvim'                                " command hint
 Plug 'tpope/vim-commentary'                                       " comment on gc
 Plug 'tpope/vim-surround'                                         " brackets, quotes, etc
 Plug 'raimondi/delimitmate'                                       " parens + auto expansion on space, new line
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}                   " dev essentials
 Plug 'neovim/nvim-lspconfig'
 Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
+Plug 'folke/lsp-colors.nvim'                                      " color-groups for lsp
+Plug 'folke/trouble.nvim'                                         " pretty lists
 Plug 'wakatime/vim-wakatime'
 Plug 'tpope/vim-abolish'                                          " substitution
 Plug 'svermeulen/vim-easyclip'                                    " yank to clipboard, 'd' for delete, 'm' for cut, 's' for substitute
@@ -107,8 +108,24 @@ set conceallevel=1
 set switchbuf+=usetab,newtab
 " }}}
 
+" project.nvim {{{
+lua << EOF
+require("project_nvim").setup {}
+EOF
+"}}}
+
 " coq {{{
-let g:coq_settings = { 'auto_start': 'shut-up' }
+let g:coq_settings = { 'keymap.eval_snips': '<leader>j', 'keymap.jump_to_mark': 'c-j', 'auto_start': 'shut-up' }
+nnoremap <F4> <cmd>COQsnip edit<cr>
+" }}}
+
+" trouble {{{
+lua require("trouble").setup {}
+nnoremap <leader>w <cmd>TroubleToggle lsp_workspace_diagnostics<cr>
+" }}}
+
+" lsp-colors {{{
+lua require("lsp-colors").setup({ Error = "#db4b4b", Warning = "#e0af68", Information = "#0db9d7", Hint = "#10B981" })
 " }}}
 
 " easyclip settings {{{
@@ -121,6 +138,7 @@ let g:EasyClipUseSubstituteDefaults=1
 " }}}
 
 " hop {{{
+lua require('hop').setup({ tease = true })
 nmap f <cmd>HopChar2<CR>
 onoremap <silent> ,l <cmd>HopLine<CR>
 onoremap <silent> ,. <cmd>HopWord<CR>
@@ -128,7 +146,6 @@ vnoremap <silent> ,l <cmd>HopLine<CR>
 vnoremap <silent> ,. <cmd>HopWord<CR>
 nnoremap <silent> ,l <cmd>HopLine<CR>
 nnoremap <silent> ,. <cmd>HopWord<CR>
-lua require'hop'.setup{ tease = true }
 " }}}
 
 " delimitmate {{{
@@ -182,6 +199,7 @@ require('telescope').setup{
 }
 require"telescope".load_extension("frecency")
 require"telescope".load_extension("fzf")
+require"telescope".load_extension("projects")
 EOF
 nnoremap <leader>f <cmd>Telescope find_files<cr>
 nnoremap <leader>g <cmd>Telescope live_grep<cr>
@@ -316,41 +334,6 @@ vnoremap gbr :GBrowse<CR>
 lua require("./lsp-config")
 " }}}
 
-" coc {{{
-" let g:coc_global_extensions = ['coc-prettier', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-marketplace', 'coc-vimlsp']
-
-" command! -nargs=0 Prettier :CocCommand prettier.formatFile
-" command! -nargs=0 Lint :CocCommand eslint.executeAutofix
-
-" " Use `[w` and `]w` to navigate diagnostics
-" nmap <silent> [w <Plug>(coc-diagnostic-prev)
-" nmap <silent> ]w <Plug>(coc-diagnostic-next)
-" " GoTo code navigation.
-" nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gy <Plug>(coc-type-definition)
-" nmap <silent> gi <Plug>(coc-implementation)
-" nmap <silent> gr <Plug>(coc-references)
-" nmap <silent> <leader>p <cmd>Prettier<CR> <cmd>Lint<CR>
-" nmap <silent> <leader>q <cmd>CocAction<CR>
-" nmap <silent> <F3> <cmd>CocRestart<CR>
-" " Use K to show documentation in preview window.
-" nnoremap <silent> K :call <SID>show_documentation()<CR>
-" " J for jsdoc
-" nnoremap <silent> J <cmd>CocCommand docthis.documentThis<CR>
-" nnoremap <silent> F <cmd>CocCommand tsserver.organizeImports<CR>
-" nnoremap <silent> <F2> <cmd>CocCommand workspace.renameCurrentFile<CR>
-
-" function! s:show_documentation()
-"   if (index(['vim','help'], &filetype) >= 0)
-"     execute 'h '.expand('<cword>')
-"   else
-"     call CocAction('doHover')
-"   endif
-" endfunction
-" " Symbol renaming.
-" nmap <leader>rn <Plug>(coc-rename)
-" }}}
-
 " Dynamic theme {{{
 if (has("termguicolors"))
   set termguicolors
@@ -385,12 +368,6 @@ call SetColorScheme()
 
 " devicons {{{
 lua require'nvim-web-devicons'.setup{}
-" }}}
-
-" ultisnips {{{
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsEditSplit="vertical"
-nmap <silent> <F4> <cmd>UltiSnipsEdit<CR>
 " }}}
 
 " Case sensitive asterisk search {{{

@@ -1,5 +1,6 @@
 -- based on https://jose-elias-alvarez.medium.com/configuring-neovims-lsp-client-for-typescript-development-5789d58ea9c
 -- npm install -g typescript typescript-language-server diagnostic-languageserver eslint_d
+-- Plug nvim-lsp-ts-utils, coq_nvim, lspconfig, null-ls
 
 local nvim_lsp = require("lspconfig")
 local coq = require "coq"
@@ -7,6 +8,15 @@ local coq = require "coq"
 -- enable null-ls integration (optional)
 require("null-ls").config {}
 require("lspconfig")["null-ls"].setup {}
+
+_G.lsp_organize_imports = function()
+  local params = {
+      command = "_typescript.organizeImports",
+      arguments = {vim.api.nvim_buf_get_name(0)},
+      title = ""
+  }
+  vim.lsp.buf.execute_command(params)
+end
 
 -- make sure to only run this once!
 nvim_lsp.tsserver.setup(coq.lsp_ensure_capabilities({
@@ -19,7 +29,7 @@ nvim_lsp.tsserver.setup(coq.lsp_ensure_capabilities({
 
     -- defaults
     ts_utils.setup {
-      debug = false,
+      debug = true,
       disable_commands = false,
       enable_import_on_completion = false,
 
@@ -43,7 +53,7 @@ nvim_lsp.tsserver.setup(coq.lsp_ensure_capabilities({
 
       -- formatting
       enable_formatting = true,
-      formatter = "prettier",
+      formatter = "eslint_d",
       formatter_opts = {},
 
       -- update imports on file move (EXPERIMENTAL)
@@ -94,8 +104,8 @@ nvim_lsp.tsserver.setup(coq.lsp_ensure_capabilities({
     buf_map(bufnr, "n", "]w", ":LspDiagNext<CR>", {silent = true})
     buf_map(bufnr, "n", "<Leader>q", ":LspCodeAction<CR>", {silent = true})
     buf_map(bufnr, "n", "<Leader>a", ":LspDiagLine<CR>", {silent = true})
-    buf_map(bufnr, "i", "<C-x><C-x>", "<cmd> LspSignatureHelp<CR>", {silent = true})
     buf_map(bufnr, "n", "<F2>", ":TSLspRenameFile<CR>", {silent = true})
+    buf_map(bufnr, "i", "<C-x><C-x>", "<cmd> LspSignatureHelp<CR>", {silent = true})
     -- vim.api.nvim_buf_set_keymap(bufnr, "n", "gi", ":TSLspImportAll<CR>", opts)
   end
 }))
