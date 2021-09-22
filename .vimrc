@@ -50,6 +50,7 @@ if(!has('nvim-0.6'))
 endif
 if (has('nvim-0.6'))                                              " experimental stuff
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}     " AST parser
+  Plug 'nvim-treesitter/nvim-treesitter-textobjects'
   Plug 'mizlan/iswap.nvim'                                        " args swapper
   Plug 'ishan9299/nvim-solarized-lua'                             " theme
   Plug 'p00f/nvim-ts-rainbow'                                     " parens
@@ -115,7 +116,7 @@ EOF
 "}}}
 
 " coq {{{
-let g:coq_settings = { 'keymap.eval_snips': '<leader>j', 'keymap.jump_to_mark': 'c-j', 'auto_start': 'shut-up' }
+let g:coq_settings = { 'keymap.eval_snips': '<leader>j', 'keymap.jump_to_mark': 'c-q', 'auto_start': 'shut-up' }
 nnoremap <F4> <cmd>COQsnip edit<cr>
 " }}}
 
@@ -407,6 +408,55 @@ require'nvim-treesitter.configs'.setup {
       node_decremental = "n",
     },
   },
+  textobjects = {
+    select = {
+      enable = true,
+      lookahead = true,
+      keymaps = {
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["ac"] = "@class.outer",
+        ["ic"] = "@class.inner"
+      }
+    },
+    swap = {
+      enable = true,
+      swap_next = {
+        ["<leader>s"] = "@parameter.inner",
+      },
+      swap_previous = {
+        ["<leader>S"] = "@parameter.inner",
+      },
+    },
+    move = {
+      enable = true,
+      set_jumps = true, -- whether to set jumps in the jumplist
+      goto_next_start = {
+        ["]m"] = "@function.outer",
+        ["]]"] = "@class.outer",
+      },
+      goto_next_end = {
+        ["]M"] = "@function.outer",
+        ["]["] = "@class.outer",
+      },
+      goto_previous_start = {
+        ["[m"] = "@function.outer",
+        ["[["] = "@class.outer",
+      },
+      goto_previous_end = {
+        ["[M"] = "@function.outer",
+        ["[]"] = "@class.outer",
+      },
+    },
+    lsp_interop = {
+      enable = true,
+      border = 'single',
+      peek_definition_code = {
+        ["df"] = "@function.outer",
+        ["dF"] = "@class.outer",
+      },
+    },
+  }
 }
 EOF
 endif
