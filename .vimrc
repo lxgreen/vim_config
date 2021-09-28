@@ -5,7 +5,6 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'tami5/sql.nvim'
 Plug 'lewis6991/gitsigns.nvim'                                    " git essentials
 Plug 'tpope/vim-fugitive'
-Plug 'rbgrouleff/bclose.vim'
 Plug 'tpope/vim-rhubarb'
 Plug 'ahmedkhalf/project.nvim'                                    " autochdir to git repo root
 Plug 'hoob3rt/lualine.nvim'                                       " status
@@ -17,7 +16,7 @@ Plug 'sudormrfbin/cheatsheet.nvim'                                " command hint
 Plug 'tpope/vim-commentary'                                       " comment on gc
 Plug 'tpope/vim-surround'                                         " brackets, quotes, etc
 Plug 'raimondi/delimitmate'                                       " parens + auto expansion on space, new line
-Plug 'neovim/nvim-lspconfig'
+Plug 'neovim/nvim-lspconfig'                                      " dev essentials
 Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 Plug 'folke/lsp-colors.nvim'                                      " color-groups for lsp
@@ -36,9 +35,9 @@ Plug 'jrudess/vim-foldtext'                                       " fold options
 Plug 'karb94/neoscroll.nvim'                                      " smooth scroll
 Plug 'bogado/file-line'                                           " `vim file:line` opens the file with caret on the line
 Plug 'vim-scripts/BufOnly.vim'                                    " kill all buffers except current one
+Plug 'famiu/bufdelete.nvim'
+Plug 'jghauser/mkdir.nvim'                                        " mkdir -p while saving files
 Plug 'vim-scripts/AnsiEsc.vim'                                    " color sequences in terminal
-Plug 'honza/vim-snippets'                                         " snippet libs
-Plug 'sirver/ultisnips'
 Plug 'instant-markdown/vim-instant-markdown', {'for': 'markdown'} " md support
 Plug 'plasticboy/vim-markdown'
 Plug 'neoclide/jsonc.vim'                                         " jsonc
@@ -55,7 +54,7 @@ if (has('nvim-0.6'))                                              " experimental
   Plug 'ishan9299/nvim-solarized-lua'                             " theme
   Plug 'p00f/nvim-ts-rainbow'                                     " parens
   Plug 'xiyaowong/nvim-transparent'                               " vim transparent bg
-  Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+  Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}                       " autocomplete + snippets
   Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 endif
 call plug#end()
@@ -433,6 +432,7 @@ require'nvim-treesitter.configs'.setup {
       set_jumps = true, -- whether to set jumps in the jumplist
       goto_next_start = {
         ["]m"] = "@function.outer",
+        ["]n"] = "@parameter.inner",
         ["]]"] = "@class.outer",
       },
       goto_next_end = {
@@ -441,6 +441,7 @@ require'nvim-treesitter.configs'.setup {
       },
       goto_previous_start = {
         ["[m"] = "@function.outer",
+        ["[n"] = "@parameter.inner",
         ["[["] = "@class.outer",
       },
       goto_previous_end = {
@@ -474,6 +475,10 @@ if(has('nvim-0.6'))
   lua require("transparent").setup({ enable = true })
 endif
 " }}}
+
+" mkdir {{{
+lua require('mkdir')
+"}}}
 
 " Abbreviations {{{
 abbrev cosnt const
