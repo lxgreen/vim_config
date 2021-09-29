@@ -35,7 +35,6 @@ Plug 'jrudess/vim-foldtext'                                       " fold options
 Plug 'karb94/neoscroll.nvim'                                      " smooth scroll
 Plug 'bogado/file-line'                                           " `vim file:line` opens the file with caret on the line
 Plug 'vim-scripts/BufOnly.vim'                                    " kill all buffers except current one
-Plug 'famiu/bufdelete.nvim'
 Plug 'jghauser/mkdir.nvim'                                        " mkdir -p while saving files
 Plug 'vim-scripts/AnsiEsc.vim'                                    " color sequences in terminal
 Plug 'instant-markdown/vim-instant-markdown', {'for': 'markdown'} " md support
@@ -50,6 +49,7 @@ endif
 if (has('nvim-0.6'))                                              " experimental stuff
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}     " AST parser
   Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+  Plug 'SmiteshP/nvim-gps'
   Plug 'mizlan/iswap.nvim'                                        " args swapper
   Plug 'ishan9299/nvim-solarized-lua'                             " theme
   Plug 'p00f/nvim-ts-rainbow'                                     " parens
@@ -107,6 +107,16 @@ set inccommand=nosplit                            " search/replace preview
 set conceallevel=1
 set switchbuf+=usetab,newtab
 " }}}
+
+" nvim-gps {{{
+lua << EOF
+require("nvim-gps").setup({
+  languages = { ["lua"] = false }
+})
+EOF
+
+"}}}
+"
 
 " project.nvim {{{
 lua << EOF
@@ -355,11 +365,11 @@ function! SetColorScheme()
   if matchstr(scheme, 'dark') == 'dark'
     set background=dark
     lua require("plenary.reload").reload_module("lualine", true)
-    lua require'lualine'.setup{ options = { theme = 'solarized_dark' }, sections = { lualine_b = {'branch', 'b:gitsigns_status', 'g:coc_status'}, lualine_c = {{ 'filename', path = 1 }}, lualine_x = {'encoding', 'filetype'}, lualine_y = {{'diagnostics', sources = {'coc'}, color_error='#ff0000', color_warn='#ffff00', color_info = '#0000ff', color_hint = '#00ff00' } } }, extensions={'fugitive'} }
+    lua require("./lualine-config").configure_with_theme("solarized_dark")
   else
     set background=light
     lua require("plenary.reload").reload_module("lualine", true)
-    lua require'lualine'.setup{ options = { theme = 'solarized_light' }, sections = { lualine_b = {'branch', 'b:gitsigns_status', 'g:coc_status'}, lualine_c = {{ 'filename', path = 1 }}, lualine_x = {'encoding', 'filetype'}, lualine_y = {{'diagnostics', sources = {'coc'}, color_error='#ff0000', color_warn='#ffff00', color_info = '#0000ff', color_hint = '#00ff00' } } }, extensions={'fugitive', 'quickfix'} }
+    lua require("./lualine-config").configure_with_theme("solarized_light")
   endif
 endfunction
 
