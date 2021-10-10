@@ -3,11 +3,13 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'nvim-lua/popup.nvim'                                        " lua infra
 Plug 'nvim-lua/plenary.nvim'
 Plug 'tami5/sql.nvim'
+
 Plug 'lewis6991/gitsigns.nvim'                                    " git essentials
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
+
 Plug 'ahmedkhalf/project.nvim'                                    " autochdir to git repo root
-Plug 'hoob3rt/lualine.nvim'                                       " status
+Plug 'hoob3rt/lualine.nvim'                                       " status line
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'nvim-telescope/telescope.nvim'                              " fuzzy search
 Plug 'nvim-telescope/telescope-frecency.nvim'
@@ -16,21 +18,27 @@ Plug 'sudormrfbin/cheatsheet.nvim'                                " command hint
 Plug 'tpope/vim-commentary'                                       " comment on gc
 Plug 'tpope/vim-surround'                                         " brackets, quotes, etc
 Plug 'raimondi/delimitmate'                                       " parens + auto expansion on space, new line
+
 Plug 'neovim/nvim-lspconfig'                                      " dev essentials
 Plug 'jose-elias-alvarez/null-ls.nvim'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 Plug 'folke/lsp-colors.nvim'                                      " color-groups for lsp
-Plug 'folke/trouble.nvim'                                         " pretty lists
+Plug 'folke/trouble.nvim'                                         " pretty lists (e.g. diagnostics)
 Plug 'wakatime/vim-wakatime'
-Plug 'tpope/vim-abolish'                                          " substitution
+Plug 'tpope/vim-abolish'                                          " enhanced search/replace
 Plug 'svermeulen/vim-easyclip'                                    " yank to clipboard, 'd' for delete, 'm' for cut, 's' for substitute
+
+Plug 'tpope/vim-unimpaired'                                       " navigate [c]hanges, [b]uffers, [f]iles, toggle yo[w]rap, yo[s]pell, yo[n]umbers, yo[c]ursor
 Plug 'tpope/vim-repeat'                                           " plugins '.' operator
-Plug 'tpope/vim-unimpaired'                                       " lots of key shortcuts
+
 Plug 'chaoren/vim-wordmotion'                                     " navigate inside camelCase, kebab-case, etc
 Plug 'phaazon/hop.nvim'                                           " 'f' for quick navigation
+
 Plug 'tmux-plugins/vim-tmux-focus-events'                         " essential for tmux
 Plug 'tmux-plugins/vim-tmux'
 Plug 'christoomey/vim-tmux-navigator'                             " CTRL+HJKL pane navigationn
+
+Plug 'beauwilliams/focus.nvim'
 Plug 'jrudess/vim-foldtext'                                       " fold options
 Plug 'karb94/neoscroll.nvim'                                      " smooth scroll
 Plug 'bogado/file-line'                                           " `vim file:line` opens the file with caret on the line
@@ -108,15 +116,15 @@ set conceallevel=1
 set switchbuf+=usetab,newtab
 " }}}
 
+" focus {{{
+lua require("focus").setup({cursorline = false, signcolumn = false, hybridnumber = true, winhighlight = true, cursorcolumn = false})
+"}}}
+
 " nvim-gps {{{
 lua << EOF
-require("nvim-gps").setup({
-  languages = { ["lua"] = false }
-})
+require("nvim-gps").setup({})
 EOF
-
-"}}}
-"
+" }}}
 
 " project.nvim {{{
 lua << EOF
@@ -135,7 +143,7 @@ nnoremap <leader>w <cmd>TroubleToggle lsp_workspace_diagnostics<cr>
 " }}}
 
 " lsp-colors {{{
-lua require("lsp-colors").setup({ Error = "#db4b4b", Warning = "#e0af68", Information = "#0db9d7", Hint = "#10B981" })
+lua require("lsp-colors").setup({ Error = "#ff0000ff", Warning = "#ffff00ff", Information = "#0000ffff", Hint = "#00ff00ff" })
 " }}}
 
 " easyclip settings {{{
@@ -252,16 +260,15 @@ augroup auto_commands
   autocmd FileType vim setlocal foldmethod=marker
   autocmd FileType vim setlocal fileencoding=UTF-8
   autocmd BufEnter .vimrc setlocal foldmethod=marker
-  autocmd TextYankPost * lua vim.highlight.on_yank {higroup="IncSearch", timeout=300, on_visual=true}
-  autocmd BufLeave * set nocursorcolumn | set nocursorline | set colorcolumn=0
-  autocmd BufEnter * set cursorcolumn | set cursorline | set colorcolumn=120
+  autocmd TextYankPost * lua vim.highlight.on_yank {higroup="IncSearch", timeout=100, on_visual=true}
+  autocmd BufEnter * set cursorcolumn cursorline colorcolumn=120
+  autocmd BufLeave * set nocursorcolumn nocursorline colorcolumn=0
 augroup END
 " }}}
 
 " macros {{{
-let @c = "vi):s/, /) => (/\<CR>"                                  " curry
-let @t = "yawi(\<right>\<Esc>ea: \<Esc>pi)\<Esc>bvU\<Esc>"   " type
-let @r = "ysi}}ireturn \<Esc>ds):w\<CR>"                          " return object literal
+let @c = "vi):s/, /) => (/\<CR>"                            " curry
+let @t = "yawi(\<right>\<Esc>ea: \<Esc>pi)\<Esc>bvU\<Esc>"  " type
 " }}}
 
 " functions {{{

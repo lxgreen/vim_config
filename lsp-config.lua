@@ -72,8 +72,8 @@ nvim_lsp.tsserver.setup(coq.lsp_ensure_capabilities({
     -- no default maps, so you may want to define some here
     local opts = { silent = true }
     -- define an alias for formatting commands
-    vim.cmd("command -buffer Formatting lua vim.lsp.buf.formatting()")
-    vim.cmd("command -buffer FormattingSync lua vim.lsp.buf.formatting_sync()")
+    vim.cmd("command! -buffer Formatting lua vim.lsp.buf.formatting()")
+    vim.cmd("command! -buffer FormattingSync lua vim.lsp.buf.formatting_sync()")
 
     -- format on save
     vim.cmd("autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()")
@@ -104,8 +104,31 @@ nvim_lsp.tsserver.setup(coq.lsp_ensure_capabilities({
     buf_map(bufnr, "n", "]w", ":LspDiagNext<CR>", {silent = true})
     buf_map(bufnr, "n", "<Leader>q", ":LspCodeAction<CR>", {silent = true})
     buf_map(bufnr, "n", "<Leader>a", ":LspDiagLine<CR>", {silent = true})
+    buf_map(bufnr, "n", "<Leader>p", ":FormattingSync<CR>", {silent = true})
     buf_map(bufnr, "n", "<F2>", ":TSLspRenameFile<CR>", {silent = true})
     buf_map(bufnr, "i", "<C-x><C-x>", "<cmd> LspSignatureHelp<CR>", {silent = true})
     -- vim.api.nvim_buf_set_keymap(bufnr, "n", "gi", ":TSLspImportAll<CR>", opts)
   end
+}))
+
+--Enable (broadcasting) snippet capability for completion
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+require'lspconfig'.jsonls.setup(coq.lsp_ensure_capabilities({
+  capabilities = capabilities,
+  commands = {
+    Format = {
+      function()
+        vim.lsp.buf.range_formatting({},{0,0},{vim.fn.line("$"),0})
+      end
+    }
+  },
+  filetypes = { "json", "jsonc" },
+    on_attach = function(client, bufnr)
+      -- format on save
+      vim.cmd("autocmd BufWritePre <buffer> lua vim.lsp.buf.range_formatting({},{0,0},{vim.fn.line('$'),0})")
+      local buf_map = vim.api.nvim_buf_set_keymap
+      buf_map(bufnr, "n", "<Leader>p", ":Format<CR>", {silent = true})
+    end
 }))
