@@ -14,16 +14,16 @@ Plug 'kyazdani42/nvim-web-devicons'
 Plug 'nvim-telescope/telescope.nvim'                              " fuzzy search
 Plug 'nvim-telescope/telescope-frecency.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
-Plug 'sudormrfbin/cheatsheet.nvim'                                " command hints in telescope
 Plug 'tpope/vim-commentary'                                       " comment on gc
 Plug 'tpope/vim-surround'                                         " brackets, quotes, etc
 Plug 'raimondi/delimitmate'                                       " parens + auto expansion on space, new line
 
-Plug 'neovim/nvim-lspconfig'                                      " dev essentials
-Plug 'jose-elias-alvarez/null-ls.nvim'
-Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}                   " dev essentials
+" Plug 'neovim/nvim-lspconfig'                                      " dev essentials
+" Plug 'jose-elias-alvarez/null-ls.nvim'
+" Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 Plug 'folke/lsp-colors.nvim'                                      " color-groups for lsp
-Plug 'folke/trouble.nvim'                                         " pretty lists (e.g. diagnostics)
+" Plug 'folke/trouble.nvim'                                         " pretty lists (e.g. diagnostics) -- LSP
 Plug 'wakatime/vim-wakatime'
 Plug 'tpope/vim-abolish'                                          " enhanced search/replace
 Plug 'svermeulen/vim-easyclip'                                    " yank to clipboard, 'd' for delete, 'm' for cut, 's' for substitute
@@ -38,6 +38,7 @@ Plug 'tmux-plugins/vim-tmux-focus-events'                         " essential fo
 Plug 'tmux-plugins/vim-tmux'
 Plug 'christoomey/vim-tmux-navigator'                             " CTRL+HJKL pane navigationn
 
+Plug 'sQVe/sort.nvim'                                             " sorting
 Plug 'beauwilliams/focus.nvim'
 Plug 'jrudess/vim-foldtext'                                       " fold options
 Plug 'karb94/neoscroll.nvim'                                      " smooth scroll
@@ -50,21 +51,18 @@ Plug 'plasticboy/vim-markdown'
 Plug 'neoclide/jsonc.vim'                                         " jsonc
 Plug 'uarun/vim-protobuf'                                         " protobuf
 Plug 'tpope/vim-speeddating'                                      " date inc/dec
-if(!has('nvim-0.6'))
-  Plug 'PeterRincker/vim-argumentative'                           " manipulating and moving between function arguments
-  Plug 'lifepillar/vim-solarized8'                                " theme
-endif
-if (has('nvim-0.6'))                                              " experimental stuff
-  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}     " AST parser
-  Plug 'nvim-treesitter/nvim-treesitter-textobjects'
-  Plug 'SmiteshP/nvim-gps'
-  Plug 'mizlan/iswap.nvim'                                        " args swapper
-  Plug 'ishan9299/nvim-solarized-lua'                             " theme
-  Plug 'p00f/nvim-ts-rainbow'                                     " parens
-  Plug 'xiyaowong/nvim-transparent'                               " vim transparent bg
-  Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}                       " autocomplete + snippets
-  Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
-endif
+Plug 'honza/vim-snippets'                                         " snippet libs
+Plug 'sirver/ultisnips'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}     " AST parser
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
+Plug 'SmiteshP/nvim-gps'                                        " current code location in status line
+Plug 'mizlan/iswap.nvim'                                        " args swapper
+Plug 'ishan9299/nvim-solarized-lua'                             " theme
+Plug 'p00f/nvim-ts-rainbow'                                     " parens
+Plug 'xiyaowong/nvim-transparent'                               " vim transparent bg
+" Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}                       " autocomplete + snippets
+" Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
+Plug 'lewis6991/spellsitter.nvim'                               " spell checker
 call plug#end()
 " }}}
 
@@ -118,28 +116,31 @@ set switchbuf+=usetab,newtab
 
 " focus {{{
 lua require("focus").setup({cursorline = false, signcolumn = false, hybridnumber = true, winhighlight = true, cursorcolumn = false})
+" }}}
+
+" spellsitter {{{
+lua require('spellsitter').setup()
 "}}}
 
 " nvim-gps {{{
-lua << EOF
-require("nvim-gps").setup({})
-EOF
+lua require("nvim-gps").setup({})
 " }}}
 
 " project.nvim {{{
 lua << EOF
-require("project_nvim").setup {}
+require("project_nvim").setup {manual_mode = true}
 EOF
+nmap <silent> <leader>r <cmd>ProjectRoot<CR>
 "}}}
 
 " coq {{{
-let g:coq_settings = { 'keymap.eval_snips': '<leader>j', 'keymap.jump_to_mark': 'c-q', 'auto_start': 'shut-up' }
-nnoremap <F4> <cmd>COQsnip edit<cr>
+" let g:coq_settings = { 'keymap.eval_snips': '<leader>j', 'keymap.jump_to_mark': 'c-q', 'auto_start': 'shut-up' }
+" nnoremap <F4> <cmd>COQsnip edit<cr>
 " }}}
 
 " trouble {{{
-lua require("trouble").setup {}
-nnoremap <leader>w <cmd>TroubleToggle lsp_workspace_diagnostics<cr>
+" lua require("trouble").setup {}
+" nnoremap <leader>w <cmd>TroubleToggle lsp_workspace_diagnostics<cr>
 " }}}
 
 " lsp-colors {{{
@@ -174,10 +175,10 @@ let g:delimitMate_balance_matchpairs = 1
 " }}}
 
 " speeddating {{{
-nmap <C-S> <Plug>SpeedDatingUp
-nmap <C-X> <Plug>SpeedDatingDown
-nnoremap <Plug>SpeedDatingFallbackUp <C-S>
-nnoremap <Plug>SpeedDatingFallbackDown <C-X>
+" nmap <C-S> <Plug>SpeedDatingUp
+" nmap <C-X> <Plug>SpeedDatingDown
+" nnoremap <Plug>SpeedDatingFallbackUp <C-S>
+" nnoremap <Plug>SpeedDatingFallbackDown <C-X>
 " }}}
 
 " markdown settings {{{
@@ -254,12 +255,13 @@ augroup auto_commands
   autocmd InsertLeave * if pumvisible() == 0|pclose|endif
   autocmd BufRead,BufNewFile *.json set filetype=json
   autocmd BufNewFile,BufRead rush.json setlocal filetype=jsonc
+  autocmd BufNewFile,BufRead .vimlocal setlocal filetype=vim
   autocmd BufRead,BufNewFile *.md set filetype=markdown
   " auto save session on exit
   autocmd VimLeave * call SaveCurrentSession()
   autocmd FileType vim setlocal foldmethod=marker
   autocmd FileType vim setlocal fileencoding=UTF-8
-  autocmd BufEnter .vimrc setlocal foldmethod=marker
+  autocmd BufEnter .vimrc,.vimlocal setlocal foldmethod=marker
   autocmd TextYankPost * lua vim.highlight.on_yank {higroup="IncSearch", timeout=100, on_visual=true}
   autocmd BufEnter * set cursorcolumn cursorline colorcolumn=120
   autocmd BufLeave * set nocursorcolumn nocursorline colorcolumn=0
@@ -347,8 +349,43 @@ nnoremap gbr :GBrowse<CR>
 vnoremap gbr :GBrowse<CR>
 " }}}
 
+" coc {{{
+let g:coc_global_extensions = ['coc-prettier', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-marketplace', 'coc-vimlsp']
+
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+command! -nargs=0 Lint :CocCommand eslint.executeAutofix
+
+" Use `[w` and `]w` to navigate diagnostics
+nmap <silent> [w <Plug>(coc-diagnostic-prev)
+nmap <silent> ]w <Plug>(coc-diagnostic-next)
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gR <Plug>(coc-rename)
+nmap <silent> <leader>p <cmd>Prettier<CR> <cmd>Lint<CR>
+nmap <silent> <leader>q <cmd>CocAction<CR>
+nmap <silent> <F3> <cmd>CocRestart<CR>
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+" J for jsdoc
+nnoremap <silent> J <cmd>CocCommand docthis.documentThis<CR>
+nnoremap <silent> F <cmd>CocCommand tsserver.organizeImports<CR>
+nnoremap <silent> <F2> <cmd>CocCommand workspace.renameCurrentFile<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+" Symbol renaming.
+" }}}
+
 " lsp {{{
-lua require("./lsp-config")
+" lua require("./lsp-config")
 " }}}
 
 " Dynamic theme {{{
@@ -356,15 +393,11 @@ if (has("termguicolors"))
   set termguicolors
 endif
 " colors
-if(!has('nvim-0.6'))
-  colorscheme solarized8_flat
-else
-  colorscheme solarized-flat
-  let g:solarized_italics = 1
-  let g:solarized_diffmode = 'normal'
-  let g:solarized_visibility = 'normal'
-  let g:solarized_statusline = 'normal'
-endif
+colorscheme solarized-flat
+let g:solarized_italics = 1
+let g:solarized_diffmode = 'normal'
+let g:solarized_visibility = 'normal'
+let g:solarized_statusline = 'normal'
 
 function! SetColorScheme()
   " relies on COLOR_SCHEME var set by zsh
@@ -394,6 +427,12 @@ nnoremap <silent> g* :let @/='\C'   . expand('<cword>')       <CR>:let v:searchf
 nnoremap <silent> g# :let @/='\C'   . expand('<cword>')       <CR>:let v:searchforward=0<CR>n
 " }}}
 
+" ultisnips {{{
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsEditSplit="vertical"
+nmap <silent> <F4> <cmd>UltiSnipsEdit<CR>
+" }}}
+
 " BufOnly mappings {{{
 nnoremap <silent> <C-w>b <cmd>BufOnly<cr>
 " }}}
@@ -403,7 +442,6 @@ lua require('neoscroll').setup()
 " }}}
 
 " treesitter {{{
-if(has('nvim-0.6'))
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 lua << EOF
@@ -466,31 +504,18 @@ require'nvim-treesitter.configs'.setup {
         ["[]"] = "@class.outer",
       },
     },
-    lsp_interop = {
-      enable = true,
-      border = 'single',
-      peek_definition_code = {
-        ["df"] = "@function.outer",
-        ["dF"] = "@class.outer",
-      },
-    },
   }
 }
 EOF
-endif
 " }}}
 
 " iswap {{{
-if(has('nvim-0.6'))
-  nnoremap <silent> ,, <cmd>ISwap<CR>
-  nnoremap <silent> << <cmd>ISwapWith<CR>
-endif
+nnoremap <silent> ,, <cmd>ISwap<CR>
+nnoremap <silent> << <cmd>ISwapWith<CR>
 " }}}
 
 " transparent {{{
-if(has('nvim-0.6'))
-  lua require("transparent").setup({ enable = true })
-endif
+lua require("transparent").setup({ enable = true })
 " }}}
 
 " mkdir {{{
