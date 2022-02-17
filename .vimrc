@@ -14,11 +14,13 @@ Plug 'kyazdani42/nvim-web-devicons'
 Plug 'nvim-telescope/telescope.nvim'                              " fuzzy search
 Plug 'nvim-telescope/telescope-frecency.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
-Plug 'tpope/vim-commentary'                                       " comment on gc
+Plug 'numToStr/Comment.nvim'                                      " comment on gcc, gbc
 Plug 'tpope/vim-surround'                                         " brackets, quotes, etc
 Plug 'raimondi/delimitmate'                                       " parens + auto expansion on space, new line
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                   " dev essentials
+Plug 'MunifTanjim/nui.nvim'
+Plug 'David-Kunz/jester'
 " Plug 'neovim/nvim-lspconfig'                                      " dev essentials
 " Plug 'jose-elias-alvarez/null-ls.nvim'
 " Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
@@ -57,7 +59,7 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}     " AST parser
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 Plug 'SmiteshP/nvim-gps'                                        " current code location in status line
 Plug 'mizlan/iswap.nvim'                                        " args swapper
-Plug 'ishan9299/nvim-solarized-lua'                             " theme
+Plug 'ellisonleao/gruvbox.nvim'
 Plug 'p00f/nvim-ts-rainbow'                                     " parens
 Plug 'xiyaowong/nvim-transparent'                               " vim transparent bg
 " Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}                       " autocomplete + snippets
@@ -105,13 +107,18 @@ set hidden
 set signcolumn=yes
 set cmdheight=2
 set updatetime=300
-let g:solarized_termcolors=256
 syntax enable
 set ignorecase
 set smartcase
 set inccommand=nosplit                            " search/replace preview
 set conceallevel=1
 set switchbuf+=usetab,newtab
+" }}}
+
+" Comment {{{
+lua << EOF
+require('Comment').setup()
+EOF
 " }}}
 
 " focus {{{
@@ -202,6 +209,15 @@ nnoremap <S-Tab> <C-w><C-p>
 nnoremap <M-Tab> gt
 nnoremap Q <cmd>q<CR>
 nnoremap <leader>d "=strftime("%b %d, %Y")<CR>P
+
+" experimental
+nnoremap c" ci"
+nnoremap c' ci'
+nnoremap c( ci(
+nnoremap c) ci)
+nnoremap c{ ci{
+nnoremap c} ci}
+
 
 " }}}
 
@@ -339,7 +355,40 @@ endif
 " }}}
 
 " gitsigns {{{
-lua require('gitsigns').setup({ current_line_blame = true })
+lua << EOF
+require('gitsigns').setup({
+  current_line_blame = true,
+  on_attach = function(bufnr)
+    local function map(mode, lhs, rhs, opts)
+        opts = vim.tbl_extend('force', {noremap = true, silent = true}, opts or {})
+        vim.api.nvim_buf_set_keymap(bufnr, mode, lhs, rhs, opts)
+    end
+
+    -- Navigation
+    map('n', ']c', "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'", {expr=true})
+    map('n', '[c', "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'", {expr=true})
+
+    -- Actions
+    map('n', '<leader>hs', ':Gitsigns stage_hunk<CR>')
+    map('v', '<leader>hs', ':Gitsigns stage_hunk<CR>')
+    map('n', '<leader>hr', ':Gitsigns reset_hunk<CR>')
+    map('v', '<leader>hr', ':Gitsigns reset_hunk<CR>')
+    map('n', '<leader>hS', '<cmd>Gitsigns stage_buffer<CR>')
+    map('n', '<leader>hu', '<cmd>Gitsigns undo_stage_hunk<CR>')
+    map('n', '<leader>hR', '<cmd>Gitsigns reset_buffer<CR>')
+    map('n', '<leader>hp', '<cmd>Gitsigns preview_hunk<CR>')
+    map('n', '<leader>hb', '<cmd>lua require"gitsigns".blame_line{full=true}<CR>')
+    map('n', '<leader>tb', '<cmd>Gitsigns toggle_current_line_blame<CR>')
+    map('n', '<leader>hd', '<cmd>Gitsigns diffthis<CR>')
+    map('n', '<leader>hD', '<cmd>lua require"gitsigns".diffthis("~")<CR>')
+    map('n', '<leader>td', '<cmd>Gitsigns toggle_deleted<CR>')
+
+    -- Text object
+    map('o', 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+    map('x', 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+  end
+})
+EOF
 " }}}
 
 " fugitive mappings {{{
@@ -350,7 +399,7 @@ vnoremap gbr :GBrowse<CR>
 " }}}
 
 " coc {{{
-let g:coc_global_extensions = ['coc-prettier', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-marketplace', 'coc-vimlsp']
+let g:coc_global_extensions = ['coc-prettier', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-marketplace', 'coc-vimlsp', 'coc-html']
 
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
 command! -nargs=0 Lint :CocCommand eslint.executeAutofix
@@ -389,15 +438,10 @@ endfunction
 " }}}
 
 " Dynamic theme {{{
-if (has("termguicolors"))
-  set termguicolors
-endif
+set termguicolors
 " colors
-colorscheme solarized-flat
-let g:solarized_italics = 1
-let g:solarized_diffmode = 'normal'
-let g:solarized_visibility = 'normal'
-let g:solarized_statusline = 'normal'
+colorscheme gruvbox
+set background=dark " or light if you want light mode
 
 function! SetColorScheme()
   " relies on COLOR_SCHEME var set by zsh
@@ -405,11 +449,11 @@ function! SetColorScheme()
   if matchstr(scheme, 'dark') == 'dark'
     set background=dark
     lua require("plenary.reload").reload_module("lualine", true)
-    lua require("./lualine-config").configure_with_theme("solarized_dark")
+    lua require("./lualine-config").configure_with_theme("gruvbox_dark")
   else
     set background=light
     lua require("plenary.reload").reload_module("lualine", true)
-    lua require("./lualine-config").configure_with_theme("solarized_light")
+    lua require("./lualine-config").configure_with_theme("gruvbox_light")
   endif
 endfunction
 
@@ -446,7 +490,7 @@ set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 lua << EOF
 local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
-parser_config.typescript.used_by = "typescriptreact"
+parser_config.typescript.filetype_to_parsername = "typescriptreact"
 require'nvim-treesitter.configs'.setup {
   rainbow = {
     enable = true,
