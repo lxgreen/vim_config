@@ -8,18 +8,20 @@ Plug 'lewis6991/gitsigns.nvim'                                    " git essentia
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 
-Plug 'ahmedkhalf/project.nvim'                                    " autochdir to git repo root
+Plug 'airblade/vim-rooter'                                        " autochdir to git repo root
 Plug 'hoob3rt/lualine.nvim'                                       " status line
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'nvim-telescope/telescope.nvim'                              " fuzzy search
 Plug 'nvim-telescope/telescope-frecency.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'cljoly/telescope-repo.nvim'
 Plug 'numToStr/Comment.nvim'                                      " comment on gcc, gbc
 Plug 'tpope/vim-surround'                                         " brackets, quotes, etc
 Plug 'raimondi/delimitmate'                                       " parens + auto expansion on space, new line
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                   " dev essentials
 Plug 'MunifTanjim/nui.nvim'
+
 Plug 'David-Kunz/jester'
 " Plug 'neovim/nvim-lspconfig'                                      " dev essentials
 " Plug 'jose-elias-alvarez/null-ls.nvim'
@@ -59,7 +61,7 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}     " AST parser
 Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 Plug 'SmiteshP/nvim-gps'                                        " current code location in status line
 Plug 'mizlan/iswap.nvim'                                        " args swapper
-Plug 'ellisonleao/gruvbox.nvim'
+Plug 'sainnhe/gruvbox-material'                                 " theme
 Plug 'p00f/nvim-ts-rainbow'                                     " parens
 Plug 'xiyaowong/nvim-transparent'                               " vim transparent bg
 " Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}                       " autocomplete + snippets
@@ -122,7 +124,7 @@ EOF
 " }}}
 
 " focus {{{
-lua require("focus").setup({cursorline = false, signcolumn = false, hybridnumber = true, winhighlight = true, cursorcolumn = false})
+lua require("focus").setup({cursorline = false, signcolumn = false, hybridnumber = true, winhighlight = false, cursorcolumn = false})
 " }}}
 
 " spellsitter {{{
@@ -133,11 +135,9 @@ lua require('spellsitter').setup()
 lua require("nvim-gps").setup({})
 " }}}
 
-" project.nvim {{{
-lua << EOF
-require("project_nvim").setup {manual_mode = true}
-EOF
-nmap <silent> <leader>r <cmd>ProjectRoot<CR>
+" rooter {{{
+let g:rooter_cd_cmd='lcd'
+let g:rooter_patterns = ['=packages']
 "}}}
 
 " coq {{{
@@ -192,6 +192,7 @@ let g:delimitMate_balance_matchpairs = 1
 let g:vim_markdown_folding_disabled = 1
 " set conceallevel=2
 let g:vim_markdown_conceal = 0
+let g:instant_markdown_mermaid = 1
 " }}}
 
 " undo settings {{{
@@ -234,19 +235,24 @@ require('telescope').setup{
 }
 require"telescope".load_extension("frecency")
 require"telescope".load_extension("fzf")
-require"telescope".load_extension("projects")
+require"telescope".load_extension("repo")
 EOF
+command! TelescopeGrepOpenFiles :lua require('telescope.builtin').live_grep({ grep_open_files = true })
+command! TelescopeReloader :lua require('telescope.builtin').reloader()
 nnoremap <leader>f <cmd>Telescope find_files<cr>
+nnoremap <leader>F <cmd>Telescope repo list cwd=~/dev<cr>
 nnoremap <leader>g <cmd>Telescope live_grep<cr>
+nnoremap <leader>G <cmd>TelescopeGrepOpenFiles<cr>
 nnoremap <leader>b <cmd>Telescope buffers<cr>
+nnoremap <leader>r <cmd>TelescopeReloader<cr>
 nnoremap <Leader>e :lua require'telescope'.extensions.frecency.frecency()<cr>
 nnoremap <Leader>* :lua require'telescope.builtin'.grep_string{}<cr>
 
 " }}}
 
 " dotfile and todo access mappings {{{
-nnoremap <silent> <leader>cv :vsplit ~/.vimrc <bar> :lcd ~/vim_config<cr>
-nnoremap <silent> <F1> :vsplit ~/.vimrc <bar> :lcd ~/vim_config<cr>
+nnoremap <silent> <leader>cv :vsplit ~/.vimrc <bar> :lcd ~/dev/vim_config<cr>
+nnoremap <silent> <F1> :vsplit ~/.vimrc <bar> :lcd ~/dev/vim_config<cr>
 nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
 nnoremap <silent> <F5> :source $MYVIMRC<cr>
 nnoremap <silent> <leader>tt :tabe ~/.tmux.conf<cr>
@@ -440,20 +446,25 @@ endfunction
 " Dynamic theme {{{
 set termguicolors
 " colors
-colorscheme gruvbox
-set background=dark " or light if you want light mode
+" let g:gruvbox_material_background = 'hard'
+let g:gruvbox_material_enable_italic = 1
+let g:gruvbox_material_visual = 'green background'
+let g:gruvbox_material_enable_bold = 1
+let g:gruvbox_material_disable_italic_comment = 0
+colorscheme gruvbox-material
+lua require("./lualine-config").configure_with_theme("gruvbox-material")
 
 function! SetColorScheme()
   " relies on COLOR_SCHEME var set by zsh
   let scheme = system("cat $HOME/.config/current_theme")
   if matchstr(scheme, 'dark') == 'dark'
     set background=dark
-    lua require("plenary.reload").reload_module("lualine", true)
-    lua require("./lualine-config").configure_with_theme("gruvbox_dark")
+    " lua require("plenary.reload").reload_module("lualine", true)
+    " lua require("./lualine-config").configure_with_theme("gruvbox_dark")
   else
     set background=light
-    lua require("plenary.reload").reload_module("lualine", true)
-    lua require("./lualine-config").configure_with_theme("gruvbox_light")
+    " lua require("plenary.reload").reload_module("lualine", true)
+    " lua require("./lualine-config").configure_with_theme("gruvbox_light")
   endif
 endfunction
 
@@ -489,8 +500,9 @@ lua require('neoscroll').setup()
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 lua << EOF
-local parser_config = require "nvim-treesitter.parsers".get_parser_configs()
-parser_config.typescript.filetype_to_parsername = "typescriptreact"
+local parser_config = require "nvim-treesitter.parsers".filetype_to_parsername
+parser_config.tsx = "typescript"
+parser_config.jsx = "javascript"
 require'nvim-treesitter.configs'.setup {
   rainbow = {
     enable = true,
