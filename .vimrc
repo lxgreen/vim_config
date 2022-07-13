@@ -7,23 +7,28 @@ Plug 'tami5/sql.nvim'
 Plug 'lewis6991/gitsigns.nvim'                                    " git essentials
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
+Plug 'ldelossa/litee.nvim'
+Plug 'ldelossa/gh.nvim'                                           " github
+Plug 'github/copilot.vim'
 
 Plug 'airblade/vim-rooter'                                        " autochdir to git repo root
 Plug 'hoob3rt/lualine.nvim'                                       " status line
 Plug 'kyazdani42/nvim-web-devicons'
+
 Plug 'nvim-telescope/telescope.nvim'                              " fuzzy search
 Plug 'nvim-telescope/telescope-frecency.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'cljoly/telescope-repo.nvim'
+
 Plug 'numToStr/Comment.nvim'                                      " comment on gcc, gbc
 Plug 'tpope/vim-surround'                                         " brackets, quotes, etc
 Plug 'raimondi/delimitmate'                                       " parens + auto expansion on space, new line
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                   " dev essentials
-Plug 'MunifTanjim/nui.nvim'
+Plug 'ap/vim-css-color'
 
 Plug 'David-Kunz/jester'
-" Plug 'neovim/nvim-lspconfig'                                      " dev essentials
+" Plug 'neovim/nvim-lspconfig'                                    " lsp dev essentials
 " Plug 'jose-elias-alvarez/null-ls.nvim'
 " Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 Plug 'folke/lsp-colors.nvim'                                      " color-groups for lsp
@@ -34,7 +39,7 @@ Plug 'svermeulen/vim-easyclip'                                    " yank to clip
 
 Plug 'tpope/vim-unimpaired'                                       " navigate [c]hanges, [b]uffers, [f]iles, toggle yo[w]rap, yo[s]pell, yo[n]umbers, yo[c]ursor
 Plug 'tpope/vim-repeat'                                           " plugins '.' operator
-
+Plug 'tpope/vim-obsession'                                        " session manager
 Plug 'chaoren/vim-wordmotion'                                     " navigate inside camelCase, kebab-case, etc
 Plug 'phaazon/hop.nvim'                                           " 'f' for quick navigation
 
@@ -53,6 +58,7 @@ Plug 'vim-scripts/AnsiEsc.vim'                                    " color sequen
 Plug 'instant-markdown/vim-instant-markdown', {'for': 'markdown'} " md support
 Plug 'plasticboy/vim-markdown'
 Plug 'neoclide/jsonc.vim'                                         " jsonc
+Plug 'gennaro-tedesco/nvim-jqx'                                   " jq interface
 Plug 'uarun/vim-protobuf'                                         " protobuf
 Plug 'tpope/vim-speeddating'                                      " date inc/dec
 Plug 'honza/vim-snippets'                                         " snippet libs
@@ -64,9 +70,11 @@ Plug 'mizlan/iswap.nvim'                                        " args swapper
 Plug 'sainnhe/gruvbox-material'                                 " theme
 Plug 'p00f/nvim-ts-rainbow'                                     " parens
 Plug 'xiyaowong/nvim-transparent'                               " vim transparent bg
-" Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}                       " autocomplete + snippets
+" Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}                     " autocomplete + snippets
 " Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 Plug 'lewis6991/spellsitter.nvim'                               " spell checker
+
+Plug 'elihunter173/dirbuf.nvim'                                 " edit filesystem in buffer
 call plug#end()
 " }}}
 
@@ -95,7 +103,6 @@ set undodir=$HOME/.local/share/nvim/undo//
 set undofile
 set nobackup
 set nowritebackup
-set guifont=Fira\ Code:h13
 set linespace=5
 set encoding=UTF-8
 set ic
@@ -115,11 +122,24 @@ set smartcase
 set inccommand=nosplit                            " search/replace preview
 set conceallevel=1
 set switchbuf+=usetab,newtab
+set dictionary=/usr/share/dict/words
+set nospell
 " }}}
 
 " Comment {{{
 lua << EOF
 require('Comment').setup()
+EOF
+" }}}
+
+" DirBuf {{{
+lua << EOF
+require("dirbuf").setup {
+  hash_padding = 2,
+  show_hidden = true,
+  sort_order = "default",
+  write_cmd = "DirbufSync",
+}
 EOF
 " }}}
 
@@ -165,7 +185,8 @@ let g:EasyClipUseSubstituteDefaults=1
 
 " hop {{{
 lua require('hop').setup({ tease = true })
-nmap f <cmd>HopChar2<CR>
+nmap f <cmd>HopPatternMW<CR>
+nmap <silent> <leader>a <cmd>HopAnywhereMW<CR>
 onoremap <silent> ,l <cmd>HopLine<CR>
 onoremap <silent> ,. <cmd>HopWord<CR>
 vnoremap <silent> ,l <cmd>HopLine<CR>
@@ -173,6 +194,14 @@ vnoremap <silent> ,. <cmd>HopWord<CR>
 nnoremap <silent> ,l <cmd>HopLine<CR>
 nnoremap <silent> ,. <cmd>HopWord<CR>
 " }}}
+
+" vim-sneak {{{
+"   let g:sneak#label = 1
+"   map f <Plug>Sneak_s
+"   map F <Plug>Sneak_S
+"   nmap ,. <Plug>SneakLabel_s
+"   " nmap ,. <Plug>SneakLabel_S
+" " }}}
 
 " delimitmate {{{
 let g:delimitMate_expand_cr = 2
@@ -205,11 +234,12 @@ let mapleader = "`"
 " nnoremap <leader>= <C-a>
 " nnoremap <leader>- <C-x>
 noremap gF :vertical wincmd f<CR> " file commands
-nnoremap <Tab> <C-w><C-w>
-nnoremap <S-Tab> <C-w><C-p>
-nnoremap <M-Tab> gt
+" nnoremap <Tab> <C-w><C-w>
+" nnoremap <S-Tab> <C-w><C-p>
+" nnoremap <M-Tab> gt
 nnoremap Q <cmd>q<CR>
 nnoremap <leader>d "=strftime("%b %d, %Y")<CR>P
+nnoremap <silent> <leader>z <cmd>QuickFixOpenAll<CR>
 
 " experimental
 nnoremap c" ci"
@@ -224,7 +254,19 @@ nnoremap c} ci}
 
 " telescope {{{
 lua << EOF
+local actions = require('telescope.actions')
 require('telescope').setup{
+defaults = {
+  mappings = {
+    n = {
+        ["<C-a>"] = actions.send_selected_to_qflist + actions.open_qflist
+      },
+    i = {
+        ["<C-a>"] = actions.send_selected_to_qflist + actions.open_qflist
+      }
+
+    }
+  },
   extensions = {
     fzf = {
       fuzzy = true,                    -- false will only do exact matching
@@ -239,8 +281,9 @@ require"telescope".load_extension("repo")
 EOF
 command! TelescopeGrepOpenFiles :lua require('telescope.builtin').live_grep({ grep_open_files = true })
 command! TelescopeReloader :lua require('telescope.builtin').reloader()
+command! TelescopeRepoCached :lua require'telescope'.extensions.repo.cached_list{search_dirs = {"~/dev"}}
 nnoremap <leader>f <cmd>Telescope find_files<cr>
-nnoremap <leader>F <cmd>Telescope repo list cwd=~/dev<cr>
+nnoremap <leader>F <cmd>Telescope repo list search_dirs=~/dev<cr>
 nnoremap <leader>g <cmd>Telescope live_grep<cr>
 nnoremap <leader>G <cmd>TelescopeGrepOpenFiles<cr>
 nnoremap <leader>b <cmd>Telescope buffers<cr>
@@ -255,7 +298,8 @@ nnoremap <silent> <leader>cv :vsplit ~/.vimrc <bar> :lcd ~/dev/vim_config<cr>
 nnoremap <silent> <F1> :vsplit ~/.vimrc <bar> :lcd ~/dev/vim_config<cr>
 nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
 nnoremap <silent> <F5> :source $MYVIMRC<cr>
-nnoremap <silent> <leader>tt :tabe ~/.tmux.conf<cr>
+nnoremap <silent> <leader>tt :tabe ~/.tmux.conf.local<cr>
+nnoremap <silent> <leader>zs :tabe ~/.zshrc <bar> :vs ~/dev/zsh-config/zsh-alias.zsh<cr>
 " }}}
 
 " window management mappings {{{
@@ -280,13 +324,14 @@ augroup auto_commands
   autocmd BufNewFile,BufRead .vimlocal setlocal filetype=vim
   autocmd BufRead,BufNewFile *.md set filetype=markdown
   " auto save session on exit
-  autocmd VimLeave * call SaveCurrentSession()
+  " autocmd VimLeave * call SaveCurrentSession()
   autocmd FileType vim setlocal foldmethod=marker
   autocmd FileType vim setlocal fileencoding=UTF-8
   autocmd BufEnter .vimrc,.vimlocal setlocal foldmethod=marker
   autocmd TextYankPost * lua vim.highlight.on_yank {higroup="IncSearch", timeout=100, on_visual=true}
   autocmd BufEnter * set cursorcolumn cursorline colorcolumn=120
   autocmd BufLeave * set nocursorcolumn nocursorline colorcolumn=0
+  autocmd FileType dirbuf nnoremap <buffer> <ESC> :DirbufQuit<CR>
 augroup END
 " }}}
 
@@ -296,6 +341,20 @@ let @t = "yawi(\<right>\<Esc>ea: \<Esc>pi)\<Esc>bvU\<Esc>"  " type
 " }}}
 
 " functions {{{
+function!   QuickFixOpenAll()
+    if empty(getqflist())
+        return
+    endif
+    let s:prev_val = ""
+    for d in getqflist()
+        let s:curr_val = bufname(d.bufnr)
+        if (s:curr_val != s:prev_val)
+            exec "edit " . s:curr_val
+        endif
+        let s:prev_val = s:curr_val
+    endfor
+endfunction
+
 function! CopyMatches(reg)
   let hits = []
   %s//\=len(add(hits, submatch(0))) ? submatch(0) : ''/gne
@@ -328,6 +387,7 @@ endfunction
 " commands {{{
 command! -nargs=0 -bar Qargs execute 'args ' . QuickfixFilenames()
 command! -register CopyMatches call CopyMatches(<q-reg>)
+command! QuickFixOpenAll call QuickFixOpenAll()
 command! VTerm :silent :vsplit | :terminal
 command! STerm :silent :split | :terminal
 command! TTerm :silent :tabe | :terminal
@@ -404,23 +464,46 @@ nnoremap gbr :GBrowse<CR>
 vnoremap gbr :GBrowse<CR>
 " }}}
 
+" gh {{{
+
+lua << EOF
+require('litee.lib').setup({
+    -- this is where you configure details about your panel, such as
+    -- whether it toggles on the left, right, top, or bottom.
+    -- leaving this blank will use the defaults.
+    -- reminder: gh.nvim uses litee.lib to implement core portions of its UI.
+})
+require('litee.gh').setup({})
+EOF
+
+" }}}
+
 " coc {{{
-let g:coc_global_extensions = ['coc-prettier', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-marketplace', 'coc-vimlsp', 'coc-html']
+let g:coc_global_extensions = ['coc-jest', 'coc-prettier', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-marketplace', 'coc-vimlsp', 'coc-html', 'coc-dictionary', 'coc-ultisnips']
 
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
 command! -nargs=0 Lint :CocCommand eslint.executeAutofix
+command! -nargs=0 CocAction : call coc#rpc#notify('codeActionRange', [<line1>, <line2>, <f-args>])
+command! -nargs=* -range CocFix    :call coc#rpc#notify('codeActionRange', [<line1>, <line2>, 'quickfix'])
+
+" apply dictionary for txt and md
+autocmd! FileType txt,md setlocal dictionary=/usr/share/dict/words
 
 " Use `[w` and `]w` to navigate diagnostics
 nmap <silent> [w <Plug>(coc-diagnostic-prev)
 nmap <silent> ]w <Plug>(coc-diagnostic-next)
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gs :call CocAction('jumpDefinition', 'split')<CR>
+nmap <silent> gD :call CocAction('jumpDefinition', 'vsplit')<CR>
+" nmap <silent> gt :call CocAction('jumpDefinition', 'tabe')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 nmap <silent> gR <Plug>(coc-rename)
 nmap <silent> <leader>p <cmd>Prettier<CR> <cmd>Lint<CR>
-nmap <silent> <leader>q <cmd>CocAction<CR>
+nmap <silent> <leader>w <cmd>CocAction<CR>
+nmap <silent> <leader>q <cmd>CocFix<CR>
 nmap <silent> <F3> <cmd>CocRestart<CR>
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -428,6 +511,15 @@ nnoremap <silent> K :call <SID>show_documentation()<CR>
 nnoremap <silent> J <cmd>CocCommand docthis.documentThis<CR>
 nnoremap <silent> F <cmd>CocCommand tsserver.organizeImports<CR>
 nnoremap <silent> <F2> <cmd>CocCommand workspace.renameCurrentFile<CR>
+
+" Run jest for current project
+command! -nargs=0 Jest :call  CocAction('runCommand', 'jest.projectTest')
+
+" Run jest for current file
+command! -nargs=0 JestCurrent :call  CocAction('runCommand', 'jest.fileTest', ['%'])
+
+" Run jest for current test
+nnoremap <leader>t :call CocAction('runCommand', 'jest.singleTest')<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -468,7 +560,8 @@ function! SetColorScheme()
   endif
 endfunction
 
-call SetColorScheme()
+set background=dark
+" call SetColorScheme()
 " }}}
 
 " devicons {{{

@@ -11,7 +11,7 @@ config.configure_with_theme = function(theme_name)
         { 'filename', path = 1 },
         {gps.get_location, condition = gps.is_available}
       },
-      lualine_x = {'encoding', 'filetype'},
+      lualine_x = {'encoding', 'filetype', "vim.fn.ObsessionStatus('★', '■')" },
       lualine_y = {{
           'diagnostics',
           sources = {'coc'},
