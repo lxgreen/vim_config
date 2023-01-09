@@ -4,9 +4,10 @@ Plug 'nvim-lua/popup.nvim'                                        " lua infra
 Plug 'nvim-lua/plenary.nvim'
 Plug 'tami5/sql.nvim'
 
-Plug 'lewis6991/gitsigns.nvim'                                    " git essentials
+Plug 'lewis6991/gitsigns.nvim'                                   " git essentials
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
+Plug 'akinsho/git-conflict.nvim'
 Plug 'ldelossa/litee.nvim'
 Plug 'ldelossa/gh.nvim'                                           " github
 Plug 'github/copilot.vim'
@@ -27,14 +28,15 @@ Plug 'raimondi/delimitmate'                                       " parens + aut
 Plug 'neoclide/coc.nvim', {'branch': 'release'}                   " dev essentials
 Plug 'ap/vim-css-color'
 
-Plug 'David-Kunz/jester'
+" Plug 'David-Kunz/jester'
 " Plug 'neovim/nvim-lspconfig'                                    " lsp dev essentials
 " Plug 'jose-elias-alvarez/null-ls.nvim'
 " Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 Plug 'folke/lsp-colors.nvim'                                      " color-groups for lsp
 " Plug 'folke/trouble.nvim'                                         " pretty lists (e.g. diagnostics) -- LSP
 Plug 'wakatime/vim-wakatime'
-Plug 'tpope/vim-abolish'                                          " enhanced search/replace
+Plug 'tpope/vim-abolish'                                          " enhanced search/replace and coercion
+Plug 'arthurxavierx/vim-caser'                                    " gs[p,k,_,m,t,' '][motion] change case
 Plug 'svermeulen/vim-easyclip'                                    " yank to clipboard, 'd' for delete, 'm' for cut, 's' for substitute
 
 Plug 'tpope/vim-unimpaired'                                       " navigate [c]hanges, [b]uffers, [f]iles, toggle yo[w]rap, yo[s]pell, yo[n]umbers, yo[c]ursor
@@ -55,6 +57,7 @@ Plug 'bogado/file-line'                                           " `vim file:li
 Plug 'vim-scripts/BufOnly.vim'                                    " kill all buffers except current one
 Plug 'jghauser/mkdir.nvim'                                        " mkdir -p while saving files
 Plug 'vim-scripts/AnsiEsc.vim'                                    " color sequences in terminal
+Plug 'norcalli/nvim-terminal.lua'
 Plug 'instant-markdown/vim-instant-markdown', {'for': 'markdown'} " md support
 Plug 'plasticboy/vim-markdown'
 Plug 'neoclide/jsonc.vim'                                         " jsonc
@@ -75,6 +78,8 @@ Plug 'xiyaowong/nvim-transparent'                               " vim transparen
 Plug 'lewis6991/spellsitter.nvim'                               " spell checker
 
 Plug 'elihunter173/dirbuf.nvim'                                 " edit filesystem in buffer
+Plug 'simnalamburt/vim-mundo'                                   " undo tree
+Plug 'chentoast/marks.nvim'
 call plug#end()
 " }}}
 
@@ -122,8 +127,10 @@ set smartcase
 set inccommand=nosplit                            " search/replace preview
 set conceallevel=1
 set switchbuf+=usetab,newtab
-set dictionary=/usr/share/dict/words
+" set dictionary=/usr/share/dict/words
 set nospell
+set shada=!,%,'100,/1000,:1000,s1000              " globals, buffers, 100 marked, 1000 searches & commands, 1MiB per item
+set sessionoptions=blank,buffers,curdir,folds,globals,help,localoptions,options,resize,winsize,tabpages,terminal
 " }}}
 
 " Comment {{{
@@ -132,15 +139,41 @@ require('Comment').setup()
 EOF
 " }}}
 
-" DirBuf {{{
+" marks.nvim {{{
 lua << EOF
-require("dirbuf").setup {
-  hash_padding = 2,
-  show_hidden = true,
-  sort_order = "default",
-  write_cmd = "DirbufSync",
-}
+require'marks'.setup({
+  default_mappings = false,
+  bookmark_0 = {
+    sign = "⚑",
+    -- explicitly prompt for a virtual line annotation when setting a bookmark from this group.
+    -- defaults to false.
+    annotate = true,
+  },
+  mappings = {
+    toggle = "`m",
+    delete = "dm",
+    delete_line  = "dm-",
+    delete_buf = "dm ",
+    prev = "`m[",
+    next = "`m]",
+    preview = "`m:",
+    set_bookmark0 = "`m0",
+    delete_bookmark = "dm0",
+  }
+})
 EOF
+" }}}
+
+" Mundo {{{
+  nnoremap <F7> :MundoToggle<CR>
+" }}}
+
+" DirBuf {{{
+lua require("./dirbuf-config")
+" }}}
+
+" nvim-terminal.lua {{{
+lua require'terminal'.setup()
 " }}}
 
 " focus {{{
@@ -195,14 +228,6 @@ nnoremap <silent> ,l <cmd>HopLine<CR>
 nnoremap <silent> ,. <cmd>HopWord<CR>
 " }}}
 
-" vim-sneak {{{
-"   let g:sneak#label = 1
-"   map f <Plug>Sneak_s
-"   map F <Plug>Sneak_S
-"   nmap ,. <Plug>SneakLabel_s
-"   " nmap ,. <Plug>SneakLabel_S
-" " }}}
-
 " delimitmate {{{
 let g:delimitMate_expand_cr = 2
 let g:delimitMate_expand_space = 1
@@ -231,25 +256,11 @@ set undofile
 
 " basic mappings {{{
 let mapleader = "`"
-" nnoremap <leader>= <C-a>
-" nnoremap <leader>- <C-x>
 noremap gF :vertical wincmd f<CR> " file commands
-" nnoremap <Tab> <C-w><C-w>
-" nnoremap <S-Tab> <C-w><C-p>
-" nnoremap <M-Tab> gt
 nnoremap Q <cmd>q<CR>
 nnoremap <leader>d "=strftime("%b %d, %Y")<CR>P
 nnoremap <silent> <leader>z <cmd>QuickFixOpenAll<CR>
-
-" experimental
-nnoremap c" ci"
-nnoremap c' ci'
-nnoremap c( ci(
-nnoremap c) ci)
-nnoremap c{ ci{
-nnoremap c} ci}
-
-
+nnoremap gX :silent :execute "!open" expand('%:p:h') . "/" . expand("<cfile>") " &"<cr>
 " }}}
 
 " telescope {{{
@@ -298,6 +309,7 @@ nnoremap <silent> <leader>cv :vsplit ~/.vimrc <bar> :lcd ~/dev/vim_config<cr>
 nnoremap <silent> <F1> :vsplit ~/.vimrc <bar> :lcd ~/dev/vim_config<cr>
 nnoremap <silent> <leader>sv :source $MYVIMRC<cr>
 nnoremap <silent> <F5> :source $MYVIMRC<cr>
+nnoremap <silent> <F6> :e<cr>
 nnoremap <silent> <leader>tt :tabe ~/.tmux.conf.local<cr>
 nnoremap <silent> <leader>zs :tabe ~/.zshrc <bar> :vs ~/dev/zsh-config/zsh-alias.zsh<cr>
 " }}}
@@ -464,6 +476,10 @@ nnoremap gbr :GBrowse<CR>
 vnoremap gbr :GBrowse<CR>
 " }}}
 
+" git-conflict {{{
+lua require('git-conflict').setup()
+" }}}
+
 " gh {{{
 
 lua << EOF
@@ -479,7 +495,7 @@ EOF
 " }}}
 
 " coc {{{
-let g:coc_global_extensions = ['coc-jest', 'coc-prettier', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-marketplace', 'coc-vimlsp', 'coc-html', 'coc-dictionary', 'coc-ultisnips']
+let g:coc_global_extensions = ['coc-jest', 'coc-prettier', 'coc-jest', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-marketplace', 'coc-vimlsp', 'coc-html', 'coc-dictionary', 'coc-ultisnips']
 
 command! -nargs=0 Prettier :CocCommand prettier.formatFile
 command! -nargs=0 Lint :CocCommand eslint.executeAutofix
@@ -487,18 +503,16 @@ command! -nargs=0 CocAction : call coc#rpc#notify('codeActionRange', [<line1>, <
 command! -nargs=* -range CocFix    :call coc#rpc#notify('codeActionRange', [<line1>, <line2>, 'quickfix'])
 
 " apply dictionary for txt and md
-autocmd! FileType txt,md setlocal dictionary=/usr/share/dict/words
+" autocmd! FileType txt,md setlocal dictionary=/usr/share/dict/words
 
 " Use `[w` and `]w` to navigate diagnostics
 nmap <silent> [w <Plug>(coc-diagnostic-prev)
 nmap <silent> ]w <Plug>(coc-diagnostic-next)
 " GoTo code navigation.
 nmap <silent> gd <Plug>(coc-definition)
-" nmap <silent> gs :call CocAction('jumpDefinition', 'split')<CR>
 nmap <silent> gD :call CocAction('jumpDefinition', 'vsplit')<CR>
-" nmap <silent> gt :call CocAction('jumpDefinition', 'tabe')<CR>
 nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gm <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 nmap <silent> gR <Plug>(coc-rename)
 nmap <silent> <leader>p <cmd>Prettier<CR> <cmd>Lint<CR>
@@ -509,7 +523,7 @@ nmap <silent> <F3> <cmd>CocRestart<CR>
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 " J for jsdoc
 nnoremap <silent> J <cmd>CocCommand docthis.documentThis<CR>
-nnoremap <silent> F <cmd>CocCommand tsserver.organizeImports<CR>
+nnoremap <silent> F <cmd>CocCommand editor.action.organizeImport<CR>
 nnoremap <silent> <F2> <cmd>CocCommand workspace.renameCurrentFile<CR>
 
 " Run jest for current project
@@ -520,6 +534,14 @@ command! -nargs=0 JestCurrent :call  CocAction('runCommand', 'jest.fileTest', ['
 
 " Run jest for current test
 nnoremap <leader>t :call CocAction('runCommand', 'jest.singleTest')<CR>
+
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                                \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
